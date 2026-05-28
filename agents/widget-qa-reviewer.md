@@ -20,12 +20,14 @@ Read all four files (`index.html`, `styles.css`, `script.js`, `widget.json`) and
 7. **Idempotent JS**: `script.js` checks for an existing rendered widget before inserting (e.g. `target.querySelector('.' + ROOT_CLASS)`).
 8. **Safe mount**: `script.js` handles missing selector and missing target without throwing.
 9. **Three breakpoints**: `styles.css` has `@media (max-width: 619px)`, `@media (min-width: 620px) and (max-width: 1023px)`, AND `@media (min-width: 1024px)` — or equivalents covering the same ranges.
-10. **form_schema completeness**: every `{{extension.fieldName}}` referenced in `index.html` has a matching `name` in `widget.json`'s `form_schema`. Report any missing.
+10. **form_schema completeness**: every `{{extension.fieldName}}` referenced in `index.html` has a matching `name` in `widget.json`'s `form_schema`. Report any missing. Also verify each `form_schema` entry carries its own `options` key (`null` is fine for text/image/selector).
 11. **No orphan form fields**: every entry in `form_schema` is referenced by HTML. Warn on orphans (not blocking).
+12. **widget.json import-readiness**: `widget.json` has a non-empty top-level `description` string AND a top-level `options` object containing non-empty `html`, `css`, `apply_js`, and `undo_js` strings. Missing `description` or `options` blocks handoff — it is the most common Optimizely import failure ("Description/Options is a missing or invalid value").
+13. **options matches code files**: `options.html`, `options.css`, and `options.apply_js` are the same content as `index.html`, `styles.css`, and `script.js` respectively (ignoring JSON string escaping). Flag drift between them.
 
 ### Sleepopolis-specific (only if star ratings are present)
-12. Each star is an individual `<span class="so-star">` with empty + filled SVG layers and `--fill` CSS variable. NOT a single combined SVG.
-13. Star SVG `viewBox="0 0 20 19"`, empty fill `#FFEED5`, filled fill `#FFC468`.
+14. Each star is an individual `<span class="so-star">` with empty + filled SVG layers and `--fill` CSS variable. NOT a single combined SVG.
+15. Star SVG `viewBox="0 0 20 19"`, empty fill `#FFEED5`, filled fill `#FFC468`.
 
 ## Report format
 

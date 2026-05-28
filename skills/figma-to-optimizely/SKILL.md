@@ -5,12 +5,14 @@ description: Convert a Figma design into an Optimizely Web Experiment widget (HT
 
 # figma-to-optimizely
 
-Turn a Figma frame into a production-ready Optimizely Web Experiment widget. Output is four files the engineer pastes directly into Optimizely:
+Turn a Figma frame into a production-ready Optimizely Web Experiment widget. Output is four files:
 
 - `index.html` — widget markup using `{{extension.fieldName}}` template variables
 - `styles.css` — scoped CSS, transparent root background
 - `script.js` — Optimizely widget API for mounting and targeting
-- `widget.json` — widget config with `form_schema` defining every editable field
+- `widget.json` — widget config with `form_schema` defining every editable field, PLUS a top-level `description` and an `options` object that inlines the html/css/apply_js/undo_js
+
+The engineer can either paste the first three files pane-by-pane (with `widget.json` supplying the form_schema), OR import `widget.json` alone — it is self-contained, so its `options` carries the full code. Both paths must work, so `widget.json` is never just the form_schema.
 
 ## Prerequisites
 
@@ -68,6 +70,15 @@ Write to `experiments/<experiment-name>/output/Optimizely/`. The four files toge
 #### widget.json
 - `form_schema` defines every `{{extension.fieldName}}` from `index.html` with the correct `field_type` (`text`, `image`, `selector`, etc.).
 - Every templatized field in HTML must appear here, or the engineer can't edit it in Optimizely.
+- Each `form_schema` entry includes its own `options` key — set it to `null` for `text`/`image`/`selector` fields.
+- **Top-level `description`** (string): a one-line human summary. REQUIRED — Optimizely rejects the import with "Description is a missing or invalid value" without it.
+- **Top-level `options`** (object): the widget's code inlined as `{ "html", "css", "apply_js", "undo_js" }`. REQUIRED — without it the import fails with "options is missing or has an invalid value". This makes `widget.json` a self-contained, one-shot importable extension.
+  - `html` = exact contents of `index.html`
+  - `css` = exact contents of `styles.css`
+  - `apply_js` = exact contents of `script.js`
+  - `undo_js` = teardown that removes the widget on revert:
+    `const extensionElement = document.getElementById('optimizely-extension-' + extension.$instance); if (extensionElement) { extensionElement.parentElement.removeChild(extensionElement); }`
+- Keep `options` byte-for-byte in sync with the three code files. Easiest path: write `index.html` / `styles.css` / `script.js` first, then read them back and embed their contents (properly JSON-escaped) into `options`. Don't hand-escape — use a JSON serializer so quotes/newlines are correct.
 - Reference shape: `references/widget-json-example.json`.
 
 ### 3. Star ratings (Sleepopolis-specific, common pattern)
@@ -121,10 +132,11 @@ Before reporting done, verify:
 2. CSS fully scoped under one root wrapper
 3. JS prevents duplicate render and fails safely on missing mount
 4. All three responsive breakpoints present
-5. Every `{{extension.fieldName}}` in HTML has a matching entry in `widget.json` `form_schema`
+5. Every `{{extension.fieldName}}` in HTML has a matching entry in `widget.json` `form_schema`, and every `form_schema` entry has its own `options` key (`null` for text/image/selector)
 6. Root wrapper background is `transparent`, not white or any solid color
 7. Star ratings (if present) use individual SO SVGs with `--fill` CSS variable
-8. `preview.html` was generated AND the local server was spun up AND the user confirmed it visually
+8. `widget.json` has a top-level `description` (non-empty string) AND a top-level `options` object with all four keys (`html`, `css`, `apply_js`, `undo_js`), each a non-empty string. `options.html`/`css`/`apply_js` match the three code files. Missing `description` or `options` is the #1 cause of Optimizely import failures ("Description/Options is a missing or invalid value").
+9. `preview.html` was generated AND the local server was spun up AND the user confirmed it visually
 
 For the full constraint reference: `references/optimizely-constraints.md`. For widget template rules: `references/widget-template-rules.md`. For the star pattern: `references/star-rating-pattern.md`.
 
@@ -141,7 +153,11 @@ If the Figma MCP output references any of the above, rewrite — don't pass thro
 
 ## Output handoff
 
-The engineer receiving the code needs the four files. Tell the user the deliverable is the contents of `experiments/<name>/output/Optimizely/` — they can zip that folder or paste each file's contents into Optimizely's widget editor directly.
+The engineer receiving the code needs the four files in `experiments/<name>/output/Optimizely/`. Two deployment paths, both supported:
+- **Pane-by-pane** — paste `index.html`, `styles.css`, `script.js` into Optimizely's HTML/CSS/JS panes; `widget.json` supplies the form_schema.
+- **One-shot import** — import `widget.json` alone. Its `options` object already carries the html/css/apply_js/undo_js and its top-level `description` satisfies the importer.
+
+Tell the user both work, so less-technical teammates can just import the JSON. Zip the folder or hand off the files directly.
 
 ## Common corrections (learned from prior runs)
 

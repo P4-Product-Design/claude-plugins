@@ -32,4 +32,25 @@ if grep -nE "^[a-zA-Z][a-zA-Z0-9_-]* *\{" "$OUT/styles.css" >/dev/null 2>&1; the
   grep -nE "^[a-zA-Z][a-zA-Z0-9_-]* *\{" "$OUT/styles.css"
 fi
 
+# widget.json must be a self-contained importable extension: top-level description + options{html,css,apply_js,undo_js}.
+# Missing either is the #1 cause of Optimizely import failures ("Description/Options is a missing or invalid value").
+node -e '
+  const fs = require("fs");
+  const p = process.argv[1];
+  let j;
+  try { j = JSON.parse(fs.readFileSync(p, "utf8")); }
+  catch (e) { console.error("widget.json is not valid JSON: " + e.message); process.exit(1); }
+  const errs = [];
+  if (typeof j.description !== "string" || !j.description.trim()) errs.push("missing/empty top-level \"description\"");
+  if (!j.options || typeof j.options !== "object") errs.push("missing top-level \"options\" object");
+  else for (const k of ["html", "css", "apply_js", "undo_js"]) {
+    if (typeof j.options[k] !== "string" || !j.options[k].trim()) errs.push("options." + k + " missing/empty");
+  }
+  if (Array.isArray(j.form_schema)) {
+    const noOpt = j.form_schema.filter(f => !("options" in f)).map(f => f.name);
+    if (noOpt.length) errs.push("form_schema entries missing \"options\" key: " + noOpt.join(", "));
+  }
+  if (errs.length) { console.error("widget.json import-readiness FAILED:\n  - " + errs.join("\n  - ")); process.exit(1); }
+' "$OUT/widget.json"
+
 echo "✅ Output structure looks valid."

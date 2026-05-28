@@ -34,7 +34,23 @@ Required fields in every widget.json:
 - `plugin_type`: `"widget"`
 - `name`: human-readable widget name (becomes the widget label in Optimizely)
 - `edit_page_url`: URL of the page where the widget will be edited/previewed
-- `form_schema`: array of field definitions
+- `form_schema`: array of field definitions (each entry needs its own `options` key — `null` for `text`/`image`/`selector`)
+- `description`: one-line human summary of the widget. **Required** — Optimizely rejects the import with "Description is a missing or invalid value" if absent.
+- `options`: object holding the widget's code, inlined: `{ "html": ..., "css": ..., "apply_js": ..., "undo_js": ... }`. **Required** — without it the import fails with "options is missing or has an invalid value".
+
+### The `options` object (combined import)
+
+`widget.json` is not just a form_schema config — it is a self-contained, importable Optimizely extension. The `options` object carries the same code that lives in the separate files:
+
+- `html` — exact contents of `index.html`
+- `css` — exact contents of `styles.css`
+- `apply_js` — exact contents of `script.js` (the mount/apply logic)
+- `undo_js` — teardown that removes the widget when the variation is reverted. Standard snippet:
+  ```js
+  const extensionElement = document.getElementById('optimizely-extension-' + extension.$instance); if (extensionElement) { extensionElement.parentElement.removeChild(extensionElement); }
+  ```
+
+Keep `options` in sync with the three code files — they are the same content, escaped as JSON strings. The separate files remain for engineers who paste pane-by-pane; the combined `options` is for teammates who import the single JSON.
 
 ## Field naming convention
 
@@ -54,4 +70,4 @@ This matches Luke's existing widgets and keeps `form_schema` field names valid a
 | JavaScript | `script.js` |
 | Widget config (form_schema) | `widget.json` |
 
-The four files are deployed together as one widget.
+The four files are deployed together as one widget. Alternatively, the whole widget can be deployed in one shot by importing `widget.json` — its `options` object already contains the HTML/CSS/apply_js/undo_js, so no pane-by-pane pasting is needed.

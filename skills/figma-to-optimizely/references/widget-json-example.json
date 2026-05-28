@@ -46,41 +46,6 @@
       "field_type": "text"
     },
     {
-      "name": "prod1star1",
-      "options": null,
-      "label": "prod1star1",
-      "default_value": "100%",
-      "field_type": "text"
-    },
-    {
-      "name": "prod1star2",
-      "options": null,
-      "label": "prod1star2",
-      "default_value": "100%",
-      "field_type": "text"
-    },
-    {
-      "name": "prod1star3",
-      "options": null,
-      "label": "prod1star3",
-      "default_value": "100%",
-      "field_type": "text"
-    },
-    {
-      "name": "prod1star4",
-      "options": null,
-      "label": "prod1star4",
-      "default_value": "100%",
-      "field_type": "text"
-    },
-    {
-      "name": "prod1star5",
-      "options": null,
-      "label": "prod1star5",
-      "default_value": "70%",
-      "field_type": "text"
-    },
-    {
       "name": "cta1text",
       "options": null,
       "label": "cta1text",
@@ -94,5 +59,12 @@
       "default_value": "https://example.com/reviews/midnight",
       "field_type": "text"
     }
-  ]
+  ],
+  "description": "One-line human summary of what the widget renders and which fields are editable. Optimizely shows this in the extension list; it is REQUIRED for import.",
+  "options": {
+    "html": "<div id=\"optimizely-extension-{{ extension.$instance }}\" class=\"so-podium\">\n  <article class=\"so-podium__card\">\n    <img class=\"so-podium__img\" src=\"{{extension.imageone}}\" alt=\"{{extension.productname1}}\">\n    <span class=\"so-podium__badge\">{{extension.superlative1}}</span>\n    <p class=\"so-podium__brand\">{{extension.brand1}}</p>\n    <h3 class=\"so-podium__name\">{{extension.productname1}}</h3>\n    <p class=\"so-podium__rating\">{{extension.rating1}}</p>\n    <a class=\"so-podium__cta\" href=\"{{extension.cta1url}}\">{{extension.cta1text}}</a>\n  </article>\n</div>\n",
+    "css": ".so-podium { background: transparent; box-sizing: border-box; width: 100%; }\n.so-podium *, .so-podium *::before, .so-podium *::after { box-sizing: border-box; }\n.so-podium__card { display: flex; flex-direction: column; gap: 8px; }\n@media (max-width: 619px) { .so-podium__card { gap: 6px; } }\n@media (min-width: 620px) and (max-width: 1023px) { .so-podium__card { gap: 8px; } }\n@media (min-width: 1024px) { .so-podium__card { gap: 12px; } }\n",
+    "apply_js": "(function () {\n  var ROOT_CLASS = 'so-podium';\n  var utils = optimizely.get('utils');\n  var selector = widget.selector;\n  function init() {\n    if (!selector) { console.warn('[widget] No widget.selector configured'); return; }\n    utils.waitForElement(selector).then(function (target) {\n      if (!target) { console.warn('[widget] Target not found for selector:', selector); return; }\n      if (target.querySelector('.' + ROOT_CLASS)) { return; }\n      target.insertAdjacentHTML('beforeend', widget.$html);\n    });\n  }\n  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }\n})();\n",
+    "undo_js": "const extensionElement = document.getElementById('optimizely-extension-' + extension.$instance); if (extensionElement) { extensionElement.parentElement.removeChild(extensionElement); }"
+  }
 }
