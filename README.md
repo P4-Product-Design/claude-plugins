@@ -14,7 +14,9 @@ Built from the process used on Swolverine's PDP and Stack & Save hero components
 
 ## Install (one time, per person)
 
-In the **Code tab** of the Claude Desktop app, type:
+Claude Desktop has three tabs: Chat, Cowork, and Code. `/plugin` commands only work in **Code** — typing them in a Chat or Cowork conversation gives a "not available in this environment" error, which just means you're in the wrong tab.
+
+In the **Code tab**, type:
 
 ```
 /plugin marketplace add P4-Product-Design/figma-to-shopify-liquid
