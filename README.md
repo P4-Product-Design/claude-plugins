@@ -11,11 +11,9 @@ This plugin's skill uses Figma's Dev Mode MCP tools (`get_design_context`, `get_
 ## Install (one time, per person)
 
 ```bash
-/plugin marketplace add <your-github-org-or-username>/figma-to-shopify-liquid
+/plugin marketplace add P4-Product-Design/figma-to-shopify-liquid
 /plugin install figma-to-shopify-liquid@figma-to-shopify-liquid
 ```
-
-Replace `<your-github-org-or-username>` with wherever this repo actually lives on GitHub.
 
 ## Update
 
