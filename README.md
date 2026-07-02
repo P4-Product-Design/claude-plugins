@@ -6,34 +6,35 @@ Built from the process used on Swolverine's PDP and Stack & Save hero components
 
 ## Prerequisites
 
-1. **Figma access.** This plugin's skill uses Figma's Dev Mode MCP tools (`get_design_context`, `get_variable_defs`, screenshots) to read designs. Each team member needs Figma MCP access connected in their own Claude Desktop / Cowork setup before the skill can pull a design — the plugin itself doesn't configure that connection.
-2. **GitHub access to this repo.** It's private, so:
-   - Your GitHub account needs to be a member of **P4-Product-Design** (or added as a collaborator on this repo specifically) with at least read access.
-   - Your machine needs to be able to authenticate git to GitHub — the easiest way is running `gh auth login` once (install the GitHub CLI from [cli.github.com](https://cli.github.com) first if you don't have it). An SSH key added to your GitHub account, or a git credential manager that already has your GitHub login cached, also works.
-   - If you skip this, adding the marketplace will fail with a "marketplace not found" / private-repo error — Claude can't fetch a repo your machine isn't authenticated to see.
+**Figma access.** This plugin's skill uses Figma's Dev Mode MCP tools (`get_design_context`, `get_variable_defs`, screenshots) to read designs. Each team member needs Figma MCP access connected in their own Claude Desktop / Cowork setup before the skill can pull a design — the plugin itself doesn't configure that connection.
+
+This repo is public, so no GitHub login, token, or git setup is needed to install it.
 
 ## Install (one time, per person)
 
-Claude Desktop has three tabs: Chat, Cowork, and Code. `/plugin` commands only work in **Code** — typing them in a Chat or Cowork conversation gives a "not available in this environment" error, which just means you're in the wrong tab.
+**Easiest way — no GitHub knowledge needed:**
 
-In the **Code tab**, type:
+1. In Claude Desktop, click **Customize** in the sidebar.
+2. Next to **Personal plugins**, click **+** → **Add** → **Add marketplace**.
+3. Paste `P4-Product-Design/figma-to-shopify-liquid` into the URL field and click **Sync**. No token needed.
+4. Adding the marketplace and installing the plugin are two separate steps. Open the **Directory** (click **Plugins** in the Customize sidebar), find the `figma-to-shopify-liquid` tab, and click the **+** on the "Figma to shopify liquid" card — that's what actually installs it.
+
+**Alternative — typed commands:** Claude Desktop has three tabs: Chat, Cowork, and Code. `/plugin` commands only work in **Code** (typing them in Chat or Cowork gives a "not available in this environment" error — that just means you're in the wrong tab). In the **Code tab**, type:
 
 ```
 /plugin marketplace add P4-Product-Design/figma-to-shopify-liquid
 /plugin install figma-to-shopify-liquid@figma-to-shopify-liquid
 ```
 
-Once installed, it shows up under **Customize → Manage plugins** in the Code tab, where you can also disable or remove it.
+Either way, once installed it shows up under **Customize → Manage plugins**, where you can update or remove it.
 
 ## Update
 
-Whenever the repo gets new commits (skill fixes, process improvements), type this in the Code tab:
+Since the repo is public, updates need no token or login setup — background auto-update just works. To update manually, type this in the Code tab, or re-run the Add marketplace steps above to re-sync:
 
 ```
 /plugin marketplace update figma-to-shopify-liquid
 ```
-
-Auto-update in the background (without you having to run this) needs a `GITHUB_TOKEN` or `GH_TOKEN` environment variable set on your machine, since background updates can't pop up an interactive login prompt. Not required for manual installs or manual updates.
 
 ## Use it
 
