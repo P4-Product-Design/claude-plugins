@@ -1,19 +1,3 @@
-<pre>
-   ▄████████  ▄█     ▄██████▄    ▄▄▄▄███▄▄▄▄      ▄████████
-  ███    ███ ███    ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███
-  ███    █▀  ███▌   ███    █▀  ███   ███   ███   ███    ███
- ▄███▄▄▄     ███▌  ▄███        ███   ███   ███   ███    ███
-▀▀███▀▀▀     ███▌ ▀▀███ ████▄  ███   ███   ███ ▀███████████
-  ███        ███    ███    ███ ███   ███   ███   ███    ███
-  ███        ███    ███    ███ ███   ███   ███   ███    ███
-  ███        █▀     ████████▀   ▀█   ███   █▀    ███    █▀
-
-           ░▒▓█  →  to  →  optimizely  █▓▒░
-
-           ─── claude code plugin · v0.1.0 ───
-                Pillar4 Media · Design Team
-</pre>
-
 # figma-to-optimizely
 
 Claude Code plugin that converts Figma designs into production-ready Optimizely Web Experiment widgets (HTML, CSS, JS, `widget.json`) with a local preview server.
