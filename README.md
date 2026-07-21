@@ -18,7 +18,7 @@ Output for every experiment:
 You only need Claude Code open. Type these two commands into the chat input:
 
 ```
-/plugin marketplace add andyramos-p4/figma-to-optimizely-plugin
+/plugin marketplace add P4-Product-Design/figma-to-optimizely-plugin
 /plugin install figma-to-optimizely
 ```
 
