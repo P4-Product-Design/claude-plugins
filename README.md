@@ -2,7 +2,7 @@
 
 A Claude Code plugin that gathers and structures product information into the two standard block formats used on Fortune Shop and NCOA Shop pages — **Product Block Lite** and **Foundational Product Block** — and delivers the result as a downloadable Word document (.docx).
 
-Supported categories: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids, and Medical Alert Systems.
+Supported categories: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids, Medical Alert Systems, and GLP-1 Medications.
 
 ## Required inputs
 

@@ -6,9 +6,9 @@ description: >
   To use, provide all required inputs: (1) Product Name, (2) Category, (3) Superlative,
   (4) Product Link, (5) Organic Link or confirm none exists, (6) Live Page URL(s) or confirm
   the page does not yet exist. Supported categories: Creatine, Protein Powder, Pre-Workout,
-  Hair Loss, NMN Supplements, Hearing Aids, and Medical Alert Systems. Also triggers for any
-  request involving product block lite, foundational product block, or spec grids for the
-  above categories.
+  Hair Loss, NMN Supplements, Hearing Aids, Medical Alert Systems, and GLP-1 Medications.
+  Also triggers for any request involving product block lite, foundational product block, or
+  spec grids for the above categories.
 ---
 
 # Product Block Gatherer
@@ -63,9 +63,9 @@ If any of these are missing when the user sends their request, respond with a cl
 
 The following will cause the skill to stop and decline rather than attempt to proceed:
 
-- **Unsupported categories** — if the requested category is not one of the nine supported categories listed above, do not attempt to map it to a similar one or proceed with a guess. Respond with: "This category is not currently supported. Supported categories are: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids (By Brand or By Product), and Medical Alert Systems (By Brand or By Product)."
+- **Unsupported categories** — if the requested category is not one of the ten supported categories listed above, do not attempt to map it to a similar one or proceed with a guess. Respond with: "This category is not currently supported. Supported categories are: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids (By Brand or By Product), Medical Alert Systems (By Brand or By Product), and GLP-1 Medications."
 - **Missing required inputs** — do not begin research or generation if any of the four required inputs (Product Name, Category, Superlative, Product Link) are absent. List what is missing and wait.
-- **Ambiguous category** — if the category provided does not clearly map to one of the nine supported options, ask for clarification rather than guessing.
+- **Ambiguous category** — if the category provided does not clearly map to one of the ten supported options, ask for clarification rather than guessing.
 - **Requests to generate content outside the defined block structure** — this skill produces exactly two outputs: a Product Block Lite and a Foundational Product Block, structured as defined. Do not add extra sections, reformat the document, or generate other content types (e.g. blog posts, social copy, ad copy) even if asked.
 - **Requests to use a different template or override field definitions** — the category spec templates in `references/category-specs.md` are the source of truth for field labels and structure. Do not rename, reorder, or replace fields based on user instruction.
 - **Requests to skip the missing field alert** — always surface missing fields to the user before generating the document. Do not silently proceed with incomplete data.
@@ -84,6 +84,7 @@ The following will cause the skill to stop and decline rather than attempt to pr
 7. Hearing Aids — By Product (single-brand review)
 8. Medical Alert Systems — By Brand (roundup)
 9. Medical Alert Systems — By Product (single-brand review)
+10. GLP-1 Medications (unified template, covers both roundup and single-brand pages)
 
 **IMPORTANT:** If the user says the category is "hearing aids" or "medical alert systems" without specifying which variant, always stop and ask before proceeding:
 
@@ -97,7 +98,7 @@ Read `references/category-specs.md` and locate the section for the product's cat
 - Which 3 rows go in the Who It's For grid
 - Which fields go in the Specs table
 
-**Do not invent or rename fields.** Use the exact labels from the template.
+**Do not invent or rename fields.** Use the exact labels from the template. (The one exception is the Who It's For grid for GLP-1 Medications, which the template explicitly marks as illustrative rather than fixed — see that category's notes in `references/category-specs.md`.)
 
 ### Step 3: Gather the product information
 
@@ -248,7 +249,7 @@ If the user provides multiple products at once, repeat the full structure for ea
 ## Writing Rules (apply to all generated content)
 - **No em dashes** — never use the character. Use a comma, colon, semicolon, or rewrite the sentence
 - **No colons** — never use the colon character anywhere in the body content (field labels in the document layout are fine, but not within the content values themselves). Rewrite the sentence instead
-- **No pricing** — never include dollar amounts, monthly costs, subscription fees, or any cost figures anywhere. The only exceptions are: (1) the Deal Description field, where a dollar-off savings amount is allowed (e.g. "Save $120 off"); (2) the Price per Serving field in the Specs table for nutrition categories (Creatine, Protein Powder, Pre-Workout, NMN). For Price per Serving, only use pricing found on the specific product page URL provided by the user — do not pull prices from Amazon, third-party retailers, or any other source. Use the lowest per-serving cost available on that page (e.g. if a larger size or subscribe and save option is offered on that page, use whichever gives the lowest per-serving cost)
+- **No pricing** — never include dollar amounts, monthly costs, subscription fees, or any cost figures anywhere. The only exceptions are: (1) the Deal Description field, where a dollar-off savings amount is allowed (e.g. "Save $120 off"); (2) the Price per Serving field in the Specs table for nutrition categories (Creatine, Protein Powder, Pre-Workout, NMN); (3) the Price per Day field in the Product Overview grid for GLP-1 Medications. For Price per Serving and Price per Day, only use pricing found on the specific product page URL provided by the user — do not pull prices from Amazon, third-party retailers, or any other source. Use the lowest available cost on that page (e.g. if a larger size, longer plan, or subscribe and save option is offered on that page, use whichever gives the lowest per-serving or per-day cost)
 - **No CTA buttons** — not included in the output; handled by the website
 - **No competitor mentions** — never name another brand. Research competitors to understand positioning, but keep that invisible in the output
 - **Pros and Cons must come from real user feedback** — base these only on what actual users report in reviews (Trustpilot, ConsumerAffairs, Reddit, verified review platforms, etc.). Never reference lab test scores, testing methodology, or what was found "in testing." If a finding appears in user reviews, it can be included; if it only appears in expert or lab evaluations, leave it out

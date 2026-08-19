@@ -203,3 +203,33 @@ Candidate labels: Go-Anywhere GPS, Longest Battery, Compact and Light, Fall Dete
 | Trial Period | e.g. "14-day risk-free trial" |
 | Returns | e.g. "Cancel by calling the company; prorated refund on prepaid plans" |
 | Warranty | e.g. "Extended Protection Plan available for lost or damaged equipment" |
+
+---
+
+## GLP-1 MEDICATIONS (unified template — covers both roundup and single-brand pages)
+
+### Product Overview Grid (4 rows)
+| Field Label | Notes |
+|---|---|
+| Active Ingredients | e.g. "Semaglutide", "Tirzepatide", "Compounded semaglutide" |
+| Form | e.g. "Injection", "Oral tablet" |
+| Medical Support | e.g. "Includes access to licensed clinicians and ongoing coaching", "Async provider check-ins only" |
+| Price per Day | e.g. "$4.20 per day" — always an *estimated without-insurance* daily cost, not a price copied verbatim from the page. See "Calculating Price per Day" below. |
+
+### Who It's For / What You'll Love Grid (3 rows)
+Unlike other categories, this list is illustrative, not a fixed menu to pick from: Insurance Savings, Behavioral Coaching, Hormonal Support, Muscle Preservation, Flat-Rate Pricing, Fast Shipping, App-Based Tracking, Clinician Access, First-Time Users, Injection-Free Option. Because GLP-1 brands vary widely (platform-based telehealth vs. single-drug pharmacies vs. compounding pharmacies), write the 3 labels that genuinely describe what this specific brand or product offers, using these only as a starting point for tone and length. Base each on something real and verifiable about the brand, not a generic fit.
+
+### Calculating Price per Day
+The product page will rarely state a per-day price directly, so derive it:
+- **Flat-fee platform** (charges one recurring fee that includes the medication, e.g. "$300/month"): divide the monthly fee by 30. A $300/month platform becomes "$10 per day."
+- **Per-drug pricing** (the page lists a cost for a specific drug or dose): divide that cost by 30 the same way, treating it as a 30-day supply unless the page states a different supply length, in which case divide by that number of days instead.
+- Always use the lowest without-insurance figure available on the specific product page (e.g. the lowest-tier plan or largest supply if multiple options are listed), and never a price that assumes insurance coverage.
+- The output field itself only needs the resulting per-day figure, not the underlying math, but be ready to explain the calculation if the user asks how it was derived.
+
+### Specs Table (4 fields — all required)
+| Field Label | Notes |
+|---|---|
+| Payment Options | e.g. "Credit card, HSA/FSA, or insurance accepted" |
+| Refund Policy | e.g. "No refunds once medication ships", "Money-back guarantee if not prescribed" |
+| Shipping | e.g. "Free discreet shipping" |
+| Subscription | e.g. "Billed monthly, cancel anytime" |
