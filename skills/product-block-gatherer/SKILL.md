@@ -104,6 +104,8 @@ Read `references/category-specs.md` and locate the section for the product's cat
 
 **If a URL is provided:** Use web_fetch to retrieve the page. Extract every field visible on the page.
 
+**If a required field is not on the page provided, do not immediately treat it as missing.** This applies to every category, not just the Specs Table. Brands routinely split this kind of information across their site: a homepage or product page rarely spells out full payment methods, refund terms, shipping specifics, or subscription/billing mechanics, but a Terms and Conditions, Refund Policy, Shipping, or FAQ page on that same site usually does. Before flagging a field as missing, search the brand's own site for it (a site-restricted web search such as `site:brand.com refund policy` works well, or check obvious footer links like Terms, FAQ, Shipping). Only fall back to asking the user once a genuine site-wide search has turned up nothing, or the site doesn't disclose the information anywhere.
+
 **If no URL is provided:** Ask the user to share the product URL, or ask them to paste or describe the key product information. You can also search the web for the product.
 
 **Only use information dated 2026 or later.** Discard any reviews, articles, or data from 2025 or earlier as potentially outdated.
@@ -158,7 +160,7 @@ Do not pad sections with vague or generic content to avoid this — flag the gap
 
 ### Step 4: Flag any missing fields
 
-Before writing the document, audit every required field against what was gathered. If anything is missing, alert the user clearly — do not silently skip fields or fill them with invented content.
+Before writing the document, audit every required field against what was gathered. If anything is missing, first search the brand's own site for it (see Step 3 — check Terms, Refund Policy, Shipping, and FAQ pages, not just the product page provided) before concluding it's genuinely unavailable. Only after that search comes up empty should you alert the user — do not silently skip fields or fill them with invented content.
 
 Present missing fields in a simple list, for example:
 
@@ -264,6 +266,7 @@ If the user provides multiple products at once, repeat the full structure for ea
   - Pre-Workout: "[X] mg of caffeine per serving"
   - NMN Supplements: "[X] mg of NMN per serving" (or NMN/NAD if both are present)
   Then provide 3 additional benefit-led highlights as usual. This first bullet follows the same length rule as the others (eight words or fewer) but is factual, not benefit-framed
+- **For GLP-1 Medications, the first PBL bullet is always what type of medication the platform offers** — compounded, FDA-approved brand-name, or both — stated as fact, not benefit-framed. Base it on what the brand's site actually offers rather than defaulting to one type. Examples: "Offers compounded GLP-1 options", "Offers FDA-approved GLP-1s like Wegovy®, Zepbound®, Ozempic®", "Offers brand-name GLP-1s and compounded alternatives". Then provide 3 additional benefit-led highlights as usual, following the normal PBL Bullet rules (benefit-led, eight words or fewer, no proprietary tech names)
 - **Subscribe and Save deal descriptions must follow this exact format** — "Subscribe and save for [X]% off" where [X] is the percentage. Never use variations like "Save [X]% when you subscribe" or "Subscribe to save [X]%"
 - **No repetition across sections** — each section must introduce information not already covered elsewhere in the document. Product Tags, PBL Bullets, Who It's For, Pros, Cons, and Bottom Line each serve a distinct purpose. If the same point would appear in two sections, cut it from the less appropriate one and find a different angle for that section instead
 - **PBL Bullets must be short** — eight words or fewer per bullet. No asides, no qualifiers, no sub-clauses (e.g. avoid "even in noisy environments", "for extended use", "and more"). State the benefit, stop.
