@@ -1,0 +1,10 @@
+{
+  "name": "PLUGIN-NAME",
+  "version": "0.1.0",
+  "description": "One sentence on what the plugin does. Teammates see this on the plugin card.",
+  "author": {
+    "name": "OWNER NAME",
+    "email": "owner@pillarfour.com"
+  },
+  "keywords": []
+}

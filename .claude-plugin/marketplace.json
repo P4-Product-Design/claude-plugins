@@ -1,0 +1,54 @@
+{
+  "name": "p4-product-design",
+  "owner": {
+    "name": "P4 Product Design",
+    "email": "chance.chipman@pillarfour.com"
+  },
+  "metadata": {
+    "description": "Every P4 Product Design plugin for Claude, in one marketplace."
+  },
+  "plugins": [
+    {
+      "name": "dev-handoff",
+      "source": "./plugins/dev-handoff",
+      "description": "Generates a complete dev handoff spec from a Figma design — Requirements and Dev Spec Handoff frames plus native Dev Mode breakpoint annotations, ready for engineers to build from.",
+      "category": "development"
+    },
+    {
+      "name": "figma-to-optimizely",
+      "source": "./plugins/figma-to-optimizely",
+      "description": "Convert Figma designs into production-ready Optimizely Web Experiment widgets (HTML, CSS, JS, widget.json) with a local preview server.",
+      "category": "design"
+    },
+    {
+      "name": "figma-to-shopify-liquid",
+      "source": "./plugins/figma-to-shopify-liquid",
+      "description": "Converts a Figma design into a pixel-exact Shopify Liquid section or block, with matching documentation and a static HTML preview.",
+      "category": "development"
+    },
+    {
+      "name": "p4-publisher",
+      "source": "./plugins/p4-publisher",
+      "description": "Adds a new plugin to the P4 marketplace or publishes an update to an existing one, with every check run before the push.",
+      "category": "productivity"
+    },
+    {
+      "name": "product-block-gatherer",
+      "source": "./plugins/product-block-gatherer",
+      "description": "Gathers and fills product block data for Fortune Shop and NCOA Shop pages, outputting a Product Block Lite and Foundational Product Block as a Word document.",
+      "category": "content"
+    },
+    {
+      "name": "qual-research-simulator",
+      "source": "./plugins/qual-research-simulator",
+      "description": "Simulates qualitative user research sessions against a Figma design using data-grounded personas that react independently, like real participants in a usability study.",
+      "category": "research"
+    },
+    {
+      "name": "swolverine-product-photos",
+      "source": "./plugins/swolverine-product-photos",
+      "description": "Turns raw Swolverine studio shots into website-ready product images: a cut-out on a transparent canvas with the house tone curve and a soft contact shadow. Pixel-accurate, no generative fill.",
+      "category": "design"
+    }
+  ]
+}

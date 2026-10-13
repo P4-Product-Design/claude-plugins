@@ -1,0 +1,41 @@
+name: Marketplace check
+
+# Runs the same scripts/check.sh that guards every push from Claude Code.
+# The weekly run catches Claude Code tightening its plugin rules before teammates hit it.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * 1" # Mondays, 8am Pacific
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Claude Code (for claude plugin validate)
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run scripts/check.sh
+        env:
+          REQUIRE_CLAUDE: "1"
+          BEFORE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "$PR_BASE" ]; then
+            export BASE="$PR_BASE"
+          elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            export BASE="$BEFORE"
+          else
+            export BASE=
+          fi
+          scripts/check.sh
