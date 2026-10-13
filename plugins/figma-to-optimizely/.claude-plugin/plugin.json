@@ -1,8 +1,9 @@
 {
   "name": "figma-to-optimizely",
+  "version": "0.2.0",
   "description": "Convert Figma designs into production-ready Optimizely Web Experiment widgets (HTML, CSS, JS, widget.json) with a local preview server.",
-  "version": "0.1.0",
   "author": {
-    "name": "Pillar4 Media"
+    "name": "Andy Ramos",
+    "email": "andy.ramos@pillarfour.com"
   }
 }

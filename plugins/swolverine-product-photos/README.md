@@ -4,6 +4,8 @@ A Claude Code plugin that turns raw studio shots of Swolverine (SWOL) supplement
 
 It reproduces the look Chance built by hand in Photoshop. **It never uses generative fill, AI upscaling or inpainting.** Every step only masks, moves, resamples or tone-maps real camera pixels, so label fine print (the Net Wt line, nutrition facts, Lot/EXP) survives untouched.
 
+**Owner:** Chance Chipman. Install it from the [P4 plugin marketplace](../../README.md#install-one-time-per-person), which has every P4 plugin in one place.
+
 ## Prerequisites
 
 1. **A Mac with Adobe Photoshop 2026.** The pipeline drives Photoshop through AppleScript (Select Subject for the mask, and building the layered TIFF). It won't run on Windows or Linux. If your Photoshop has a different name, set `SWOL_PS_APP` (for example `SWOL_PS_APP="Adobe Photoshop 2027"`).
@@ -14,34 +16,6 @@ It reproduces the look Chance built by hand in Photoshop. **It never uses genera
    - passing `--root /path/to/folder` on each run
 
    If none is set, the script stops and says so. Claude will ask you for the folder.
-
-This repo is public, so no GitHub login, token, or git setup is needed to install it.
-
-## Install (one time, per person)
-
-**Easiest way — no GitHub knowledge needed:**
-
-1. In Claude Desktop, click **Customize** in the sidebar.
-2. Next to **Personal plugins**, click **+** → **Add** → **Add marketplace**.
-3. Paste `P4-Product-Design/swolverine-product-photos` into the URL field and click **Sync**. No token needed.
-4. Adding the marketplace and installing the plugin are two separate steps. Open the **Directory** (click **Plugins** in the Customize sidebar), find the `swolverine-product-photos` tab, and click the **+** on the card — that's what actually installs it.
-
-**Alternative — typed commands:** Claude Desktop has three tabs: Chat, Cowork, and Code. `/plugin` commands only work in **Code** (typing them in Chat or Cowork gives a "not available in this environment" error — that just means you're in the wrong tab). In the **Code tab**, type:
-
-```
-/plugin marketplace add P4-Product-Design/swolverine-product-photos
-/plugin install swolverine-product-photos@swolverine-product-photos
-```
-
-Either way, once installed it shows up under **Customize → Manage plugins**, where you can update or remove it.
-
-## Update
-
-Since the repo is public, updates need no token or login setup — background auto-update just works. To update manually, type this in the Code tab, or re-run the Add marketplace steps above to re-sync:
-
-```
-/plugin marketplace update swolverine-product-photos
-```
 
 ## Use it
 
@@ -55,13 +29,12 @@ or "do the next product", or "make these look like the other product images". Cl
 
 **Exposure matching.** Exposure is matched per capture session (the EXIF capture date). `assets/config.json` holds the approved gain for each known session and the reference raw it was measured against. If a reference raw isn't in your `Raw/` or `Archive/` folder, the approved session gain is still applied, but within-session exposure drift isn't corrected, and the script says so. A new session gets an estimated gain only; check it against the existing Finals and get the look approved before adding it to `config.json`.
 
-## What's in this repo
+## What's in this plugin
 
 ```
 swolverine-product-photos/
 ├── .claude-plugin/
-│   ├── plugin.json         # plugin manifest
-│   └── marketplace.json    # marketplace catalog (this repo is both, for a single-plugin install)
+│   └── plugin.json         # plugin manifest
 ├── skills/
 │   └── swolverine-product-photos/
 │       ├── SKILL.md                 # the skill: rules, folder layout, and the step-by-step run
@@ -81,8 +54,8 @@ swolverine-product-photos/
 └── README.md
 ```
 
-## Updating the skill itself
+## Updating this plugin
 
-Edit the files under `skills/swolverine-product-photos/`, bump the `version` in both `.claude-plugin/plugin.json` and the plugin entry in `.claude-plugin/marketplace.json`, commit, and push. Everyone who's installed the plugin picks up the change the next time they run the update command above.
+Edit the files in this folder, bump `version` in `.claude-plugin/plugin.json`, and push to `main`. Teammates get the new version on their next sync. The full steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). In Claude Code, you can also ask Claude to "publish my update to the P4 marketplace".
 
 The house look in `assets/config.json` (canvas, baseline, tone curve, contact shadow, session gains) should only change with Chance's sign-off.

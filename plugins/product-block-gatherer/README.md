@@ -4,6 +4,8 @@ A Claude Code plugin that gathers and structures product information into the tw
 
 Supported categories: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids, Medical Alert Systems, and GLP-1 Medications.
 
+**Owner:** Audrey McGlynn. Install it from the [P4 plugin marketplace](../../README.md#install-one-time-per-person), which has every P4 plugin in one place.
+
 ## Required inputs
 
 Before generating anything, the skill needs all of the following:
@@ -17,34 +19,6 @@ Before generating anything, the skill needs all of the following:
 
 If any input is missing, the skill asks for it directly rather than guessing.
 
-This repo is public, so no GitHub login, token, or git setup is needed to install it.
-
-## Install (one time, per person)
-
-**Easiest way — no GitHub knowledge needed:**
-
-1. In Claude Desktop, click **Customize** in the sidebar.
-2. Next to **Personal plugins**, click **+** → **Add** → **Add marketplace**.
-3. Paste `P4-Product-Design/product-block-gatherer` into the URL field and click **Sync**. No token needed.
-4. Adding the marketplace and installing the plugin are two separate steps. Open the **Directory** (click **Plugins** in the Customize sidebar), find the `product-block-gatherer` tab, and click the **+** on the card — that's what actually installs it.
-
-**Alternative — typed commands:** Claude Desktop has three tabs: Chat, Cowork, and Code. `/plugin` commands only work in **Code** (typing them in Chat or Cowork gives a "not available in this environment" error — that just means you're in the wrong tab). In the **Code tab**, type:
-
-```
-/plugin marketplace add P4-Product-Design/product-block-gatherer
-/plugin install product-block-gatherer@product-block-gatherer
-```
-
-Either way, once installed it shows up under **Customize → Manage plugins**, where you can update or remove it.
-
-## Update
-
-Since the repo is public, updates need no token or login setup — background auto-update just works. To update manually, type this in the Code tab, or re-run the Add marketplace steps above to re-sync:
-
-```
-/plugin marketplace update product-block-gatherer
-```
-
 ## Use it
 
 Provide all six required inputs for a product, e.g.:
@@ -53,13 +27,12 @@ Provide all six required inputs for a product, e.g.:
 
 If anything is missing, the skill lists exactly what's needed before drafting.
 
-## What's in this repo
+## What's in this plugin
 
 ```
 product-block-gatherer/
 ├── .claude-plugin/
-│   ├── plugin.json         # plugin manifest
-│   └── marketplace.json    # marketplace catalog (this repo is both, for a single-plugin install)
+│   └── plugin.json         # plugin manifest
 ├── skills/
 │   └── product-block-gatherer/
 │       ├── SKILL.md              # the skill: required inputs → research → docx output
@@ -68,6 +41,6 @@ product-block-gatherer/
 └── README.md
 ```
 
-## Updating the skill itself
+## Updating this plugin
 
-Edit `skills/product-block-gatherer/SKILL.md`, bump the `version` in both `.claude-plugin/plugin.json` and the plugin entry in `.claude-plugin/marketplace.json`, commit, and push. Everyone who's installed the plugin picks up the change the next time they run the update command above.
+Edit the files in this folder, bump `version` in `.claude-plugin/plugin.json`, and push to `main`. Teammates get the new version on their next sync. The full steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). In Claude Code, you can also ask Claude to "publish my update to the P4 marketplace".

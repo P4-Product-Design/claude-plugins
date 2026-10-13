@@ -1,9 +1,10 @@
 {
   "name": "figma-to-shopify-liquid",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Converts a Figma design into a pixel-exact Shopify Liquid section or block, with matching documentation and a static HTML preview.",
   "author": {
-    "name": "Swolverine"
+    "name": "Chance Chipman",
+    "email": "chance.chipman@pillarfour.com"
   },
   "keywords": ["figma", "shopify", "liquid", "theme", "design-to-code"]
 }

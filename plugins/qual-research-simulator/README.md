@@ -6,37 +6,11 @@ Supports both **exploratory sessions** (no prior data — "how would these peopl
 
 **Every output is clearly labeled SIMULATED / not real user research.** This tool produces plausible, data-grounded hypotheses to inform design thinking — it does not replace real user research.
 
+**Owner:** Audrey McGlynn. Install it from the [P4 plugin marketplace](../../README.md#install-one-time-per-person), which has every P4 plugin in one place.
+
 ## Prerequisites
 
 **Figma access.** This plugin's skill uses Figma MCP to view the design being tested. Each team member needs Figma MCP connected in their own Claude Desktop / Cowork setup before the skill can run. The plugin itself doesn't configure that connection.
-
-This repo is public, so no GitHub login, token, or git setup is needed to install it.
-
-## Install (one time, per person)
-
-**Easiest way — no GitHub knowledge needed:**
-
-1. In Claude Desktop, click **Customize** in the sidebar.
-2. Next to **Personal plugins**, click **+** → **Add** → **Add marketplace**.
-3. Paste `P4-Product-Design/qual-research-simulator` into the URL field and click **Sync**. No token needed.
-4. Adding the marketplace and installing the plugin are two separate steps. Open the **Directory** (click **Plugins** in the Customize sidebar), find the `qual-research-simulator` tab, and click the **+** on the card — that's what actually installs it.
-
-**Alternative — typed commands:** Claude Desktop has three tabs: Chat, Cowork, and Code. `/plugin` commands only work in **Code** (typing them in Chat or Cowork gives a "not available in this environment" error — that just means you're in the wrong tab). In the **Code tab**, type:
-
-```
-/plugin marketplace add P4-Product-Design/qual-research-simulator
-/plugin install qual-research-simulator@qual-research-simulator
-```
-
-Either way, once installed it shows up under **Customize → Manage plugins**, where you can update or remove it.
-
-## Update
-
-Since the repo is public, updates need no token or login setup — background auto-update just works. To update manually, type this in the Code tab, or re-run the Add marketplace steps above to re-sync:
-
-```
-/plugin marketplace update qual-research-simulator
-```
 
 ## Use it
 
@@ -50,13 +24,12 @@ If the category, design description/hypothesis, or Figma link is missing, the sk
 
 Each persona reacts to whichever device (mobile, tablet, or desktop) its own behavioral data actually skews toward, using the company's real breakpoints and reference resolutions rather than guessing — see `references/viewport-specs.md`. Personas with no stated device skew react to all frames present in one unified reaction.
 
-## What's in this repo
+## What's in this plugin
 
 ```
 qual-research-simulator/
 ├── .claude-plugin/
-│   ├── plugin.json         # plugin manifest
-│   └── marketplace.json    # marketplace catalog (this repo is both, for a single-plugin install)
+│   └── plugin.json         # plugin manifest
 ├── skills/
 │   └── qual-research-simulator/
 │       ├── SKILL.md                       # the skill: intake → persona sessions → synthesis
@@ -72,8 +45,8 @@ qual-research-simulator/
 └── README.md
 ```
 
-## Updating the skill itself
+## Updating this plugin
 
-Edit `skills/qual-research-simulator/SKILL.md` (or the reference files), bump the `version` in both `.claude-plugin/plugin.json` and the plugin entry in `.claude-plugin/marketplace.json`, commit, and push. Everyone who's installed the plugin picks up the change the next time they run the update command above.
+Edit the files in this folder, bump `version` in `.claude-plugin/plugin.json`, and push to `main`. Teammates get the new version on their next sync. The full steps are in [CONTRIBUTING.md](../../CONTRIBUTING.md). In Claude Code, you can also ask Claude to "publish my update to the P4 marketplace".
 
 If the underlying persona data has been updated at the source of truth, update the relevant `references/personas-*.md` file directly — personas never carry information across sessions on their own.

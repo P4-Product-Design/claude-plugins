@@ -45,7 +45,7 @@ Procedure:
    - `widget.json` has a top-level `description` and a top-level `options` object (`html`/`css`/`apply_js`/`undo_js`), all non-empty.
    - Root background is `transparent`.
    - Star ratings (if present) use individual SO SVGs with `--fill`.
-   - Optionally run `scripts/validate-output.sh experiments/$2` to smoke-check structure and widget.json import-readiness.
+   - Optionally run `"${CLAUDE_PLUGIN_ROOT}/scripts/validate-output.sh" experiments/$2` to smoke-check structure and widget.json import-readiness.
 
 6. **Write QA notes** to `experiments/$2/qa/implementation-notes.md` covering:
    - What pastes into Optimizely's HTML / CSS / JS / widget JSON panes.
