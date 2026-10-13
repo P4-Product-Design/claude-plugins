@@ -1,0 +1,9 @@
+{
+  "name": "qual-research-simulator",
+  "version": "0.2.0",
+  "description": "Simulates qualitative user research sessions against a Figma design using data-grounded personas that react independently, like real participants in a usability study.",
+  "author": {
+    "name": "P4 Product Design"
+  },
+  "keywords": ["figma", "user-research", "personas", "usability", "qualitative-research", "simulation"]
+}
