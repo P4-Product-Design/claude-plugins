@@ -1,6 +1,6 @@
 {
   "name": "dev-handoff",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generates a complete dev handoff spec from a Figma design — Requirements and Dev Spec Handoff frames plus native Dev Mode breakpoint annotations, ready for engineers to build from.",
   "author": {
     "name": "P4 Product Design"
