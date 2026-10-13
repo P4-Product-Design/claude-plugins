@@ -1,9 +1,10 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "figma-to-optimizely",
-  "description": "Convert Figma designs into production-ready Optimizely Web Experiment widgets with a local preview.",
   "owner": {
     "name": "Pillar4 Media"
+  },
+  "metadata": {
+    "description": "Convert Figma designs into production-ready Optimizely Web Experiment widgets with a local preview."
   },
   "plugins": [
     {
