@@ -1,0 +1,40 @@
+/* SO Branded Star Rating Styles
+   Pair with so-star.html. Wrap a row of 5 stars in a flex container.
+   Per-star --fill drives partial fills (e.g. --fill: 60%). */
+
+.so-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.so-star {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  overflow: hidden;
+}
+
+.so-star-empty {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.so-star-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--fill, 100%);
+  height: 14px;
+  overflow: hidden;
+}
+
+.so-star-full {
+  display: block;
+  width: 14px;
+  height: 14px;
+  max-width: none;
+}

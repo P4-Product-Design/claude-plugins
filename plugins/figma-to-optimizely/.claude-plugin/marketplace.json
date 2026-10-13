@@ -1,0 +1,20 @@
+{
+  "name": "figma-to-optimizely",
+  "owner": {
+    "name": "Pillar4 Media"
+  },
+  "metadata": {
+    "description": "Convert Figma designs into production-ready Optimizely Web Experiment widgets with a local preview."
+  },
+  "plugins": [
+    {
+      "name": "figma-to-optimizely",
+      "description": "Convert Figma designs into production-ready Optimizely Web Experiment widgets (HTML, CSS, JS, widget.json) with a local preview server.",
+      "version": "0.1.0",
+      "category": "design",
+      "keywords": ["figma", "optimizely", "design-to-code", "ab-testing", "widget"],
+      "source": "./",
+      "homepage": "https://github.com/P4-Product-Design/figma-to-optimizely-plugin"
+    }
+  ]
+}
