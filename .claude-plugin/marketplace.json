@@ -1,14 +1,16 @@
 {
   "name": "figma-to-shopify-liquid",
-  "description": "Swolverine's marketplace for the Figma-to-Shopify-Liquid plugin.",
   "owner": {
     "name": "Swolverine"
+  },
+  "metadata": {
+    "description": "Swolverine's marketplace for the Figma-to-Shopify-Liquid plugin."
   },
   "plugins": [
     {
       "name": "figma-to-shopify-liquid",
       "description": "Converts a Figma design into a pixel-exact Shopify Liquid section or block, with matching documentation and a static HTML preview.",
-      "source": ".",
+      "source": "./",
       "version": "0.1.0",
       "author": {
         "name": "Swolverine"
