@@ -1,14 +1,16 @@
 {
   "name": "qual-research-simulator",
-  "description": "P4 Product Design's marketplace for the qual-research-simulator plugin.",
   "owner": {
     "name": "P4 Product Design"
+  },
+  "metadata": {
+    "description": "P4 Product Design's marketplace for the qual-research-simulator plugin."
   },
   "plugins": [
     {
       "name": "qual-research-simulator",
       "description": "Simulates qualitative user research sessions against a Figma design using data-grounded personas that react independently, like real participants in a usability study.",
-      "source": ".",
+      "source": "./",
       "version": "0.2.0",
       "author": {
         "name": "P4 Product Design"
