@@ -1,14 +1,16 @@
 {
   "name": "product-block-gatherer",
-  "description": "P4 Product Design's marketplace for the product-block-gatherer plugin.",
   "owner": {
     "name": "P4 Product Design"
+  },
+  "metadata": {
+    "description": "P4 Product Design's marketplace for the product-block-gatherer plugin."
   },
   "plugins": [
     {
       "name": "product-block-gatherer",
       "description": "Gathers and fills product block data for Fortune Shop and NCOA Shop pages, outputting a Product Block Lite and Foundational Product Block as a Word document.",
-      "source": ".",
+      "source": "./",
       "version": "0.2.1",
       "author": {
         "name": "P4 Product Design"
