@@ -1,6 +1,6 @@
 ---
 name: publish-to-p4
-description: Add a new plugin or skill to the P4 Product Design plugin marketplace (GitHub P4-Product-Design/claude-plugins), or publish an update to one that's already there. Use whenever someone wants to share a skill or plugin with the P4 team, says "publish this to the P4 marketplace", "add my skill to the team plugins", "push my plugin update", "ship the new version of <plugin>", or has edited a P4 plugin and wants teammates to get it. Also use when someone asks how to contribute to the P4 plugins.
+description: Add a new plugin or skill to the P4 Product Design plugin marketplace (GitHub P4-Product-Design/claude-plugins), or publish an update to one that's already there. Use whenever someone wants to share a skill or plugin with the P4 team, says "publish this to the P4 marketplace", "add my skill to the team plugins", "push my plugin update", "ship the new version of <plugin>", or has edited a P4 plugin and wants teammates to get it. Also use when someone asks how to contribute to the P4 plugins. Keeps the P4-Product-Design GitHub org homepage's plugin list in sync.
 ---
 
 # Publish to the P4 marketplace
@@ -93,7 +93,24 @@ The plugin should show as installed at the new version.
 5. **If the push is rejected for permissions,** the person doesn't have write access yet. Tell them to message Chance with their GitHub username for an invite to the P4-Product-Design org. Leave the commit in place so they can push once they're added.
 6. Never force-push, and never rewrite history on `main`.
 
-## 5. Confirm and tell the team
+## 5. Update the org homepage
+
+The org homepage at https://github.com/P4-Product-Design shows the plugin table from a separate repo: `P4-Product-Design/.github`, file `profile/README.md`. Update it whenever a plugin is **added or removed**, or its **"What it does" summary changes**. Skip this step for a version-only update.
+
+1. Find a clone of `P4-Product-Design/.github`, or clone it next to `claude-plugins`:
+   ```
+   git clone https://github.com/P4-Product-Design/.github.git P4-Product-Design-.github
+   ```
+   Run `git status` (stop and ask if it has unrelated changes), `git pull --rebase`, and check the repo-local git identity, the same as in step 1.
+2. Edit `profile/README.md`:
+   - **Added:** add a row to the Plugins table in alphabetical order. Link the name to `https://github.com/P4-Product-Design/claude-plugins/tree/main/plugins/<name>`, and give a one-sentence summary (shorter than the plugin.json description) and the owner, matching the existing rows.
+   - **Removed:** delete its row.
+   - **Changed:** update the summary in this table and in the claude-plugins `README.md` table, so the two match.
+   - If the plugin adds a new kind of work, update the intro sentence that lists the plugin areas ("Figma-to-code, dev handoff, ...").
+3. Show the person the diff and get a yes. Then commit (`"Profile: add <name>"`, `"Profile: remove <name>"`, or `"Profile: update <name> summary"`), run `git pull --rebase`, and `git push`. This repo has no check script. Same push access as claude-plugins.
+4. Open https://github.com/P4-Product-Design and confirm the table shows the change. The org page can take a minute to refresh.
+
+## 6. Confirm and tell the team
 
 1. Check the GitHub check: https://github.com/P4-Product-Design/claude-plugins/actions. Wait a couple of minutes for the newest run to go green. If it fails, read the log and fix it.
 2. Give the person a short message they can post. Include:

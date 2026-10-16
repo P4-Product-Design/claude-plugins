@@ -35,7 +35,8 @@ Claude handles the folder, version, checks, test install, and push. It asks befo
 7. **Add it to the plugin table** in `README.md`.
 8. **Check and test:** run the check and the test install (see below).
 9. **Commit and push:** `git pull --rebase`, then `git push`.
-10. **Tell the team:** "Customize → Plugins → p4-product-design tab, click + on <name>."
+10. **Add it to the org homepage:** add a matching row to the plugin table in `profile/README.md` of the [`P4-Product-Design/.github`](https://github.com/P4-Product-Design/.github) repo, in alphabetical order. That table is what shows on https://github.com/P4-Product-Design. Do the same when you remove a plugin or change its summary.
+11. **Tell the team:** "Customize → Plugins → p4-product-design tab, click + on <name>."
 
 ## Update a plugin
 

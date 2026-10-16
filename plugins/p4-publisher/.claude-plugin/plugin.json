@@ -1,6 +1,6 @@
 {
   "name": "p4-publisher",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Adds a new plugin to the P4 marketplace or publishes an update to an existing one, with every check run before the push.",
   "author": {
     "name": "Chance Chipman",
