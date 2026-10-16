@@ -1,0 +1,10 @@
+{
+  "name": "design-audit",
+  "version": "0.1.0",
+  "description": "Audits a Figma design against best practices for its page type and UX laws, returns a prioritized list of user-behavior issues and research recommendations, then adds the notes to Figma.",
+  "author": {
+    "name": "Chance Chipman",
+    "email": "chance.chipman@pillarfour.com"
+  },
+  "keywords": ["figma", "audit", "ux", "design-review", "pdp", "landing-page", "accessibility"]
+}

@@ -30,6 +30,7 @@ Swap in any plugin name from the table below.
 
 | Plugin | What it does | Owner |
 |---|---|---|
+| [design-audit](plugins/design-audit) | Audits a Figma design against page-type best practices and UX laws, then adds prioritized notes and research recommendations to Figma. | Chance Chipman |
 | [dev-handoff](plugins/dev-handoff) | Turns a Figma design into an engineer-ready handoff: Requirements and Dev Spec frames, plus native Dev Mode annotations for what changes between breakpoints. | Chance Chipman |
 | [figma-to-optimizely](plugins/figma-to-optimizely) | Turns a Figma design into an Optimizely Web Experiment widget (HTML, CSS, JS, widget.json) with a local preview. | Andy Ramos |
 | [figma-to-shopify-liquid](plugins/figma-to-shopify-liquid) | Converts a Figma design into a pixel-exact Shopify Liquid section or block, with matching docs and a static preview. | Chance Chipman |
