@@ -11,7 +11,7 @@
     {
       "name": "design-audit",
       "source": "./plugins/design-audit",
-      "description": "Audits a Figma design against best practices for its page type and UX laws, returns a prioritized list of user-behavior issues and research recommendations, then adds the notes to Figma.",
+      "description": "Audits a Figma design, live page, or email against best practices for its page type and UX laws, returns a prioritized list of user-behavior issues and research recommendations, then adds the notes to Figma.",
       "category": "design"
     },
     {

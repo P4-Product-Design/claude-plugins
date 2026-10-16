@@ -2,7 +2,7 @@
 
 Walk the page the way a user would. Each check names what the user is trying to do.
 
-**Applies:** All · Page (long-form, affiliate review, roundup, comparison, collection, homepage) · Landing (incl. quiz results, partner co-branded) · PDP · Block (product block) · Form (lead-gen form or quiz).
+**Applies:** All · Page (long-form, affiliate review, roundup, comparison, collection, homepage) · Landing (incl. quiz results, partner co-branded) · PDP · Block (product block) · Form (lead-gen form or quiz) · Email.
 † = can't be confirmed from a static design. List it under **Verify in build**.
 
 These are internal. Never show check names in the output.
@@ -74,3 +74,15 @@ These are internal. Never show check names in the output.
 | Stock & sale | Know if it's available or discounted | No out-of-stock or sale state | — | Block, PDP |
 | Loading | Wait without confusion | No placeholder; layout jumps when data arrives | Doherty threshold | Block, Page, PDP |
 | No results | Recover from an empty filter | Empty area with no message or reset | — | Page |
+
+## 8. Email — does it earn the open and the click?
+
+| Check | User is trying to… | Red flags | Law | Applies |
+|---|---|---|---|---|
+| Open | Decide whether to open | Preheader repeats the subject line; vague subject | Information scent | Email |
+| One job | Know what the email wants | Several competing asks; two blocks say the same thing | Hick's law | Email |
+| CTA on mobile | Act without scrolling | Primary CTA below the first mobile screen; CTA reads "Learn more" | Fitts's law | Email |
+| Value before ask | See why to click | Ask comes before any reason to click | Serial position | Email |
+| Stage fit | Feel the email suits them | Tone doesn't fit the stage (welcome vs. re-engagement vs. promo) | — | Email |
+| Rendering † | Read it anywhere | Hierarchy breaks in dark mode or plain text; links look like body text | — | Email |
+| Footer | Trust and unsubscribe | Unsubscribe or legal copy missing or hidden | Peak-end rule | Email |

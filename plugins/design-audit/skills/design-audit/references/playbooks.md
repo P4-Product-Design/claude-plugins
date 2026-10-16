@@ -3,7 +3,9 @@
 These set the bar for the audit. In Step 1, load:
 1. The playbook for the **design type** (and traffic source, for landing pages).
 2. **Trust factors**, every time.
-3. **Older adults**, when the brand or audience skews 50+ (e.g. hearing, medical alert, AARP, NCOA).
+3. **Conversion zone**, whenever there's a primary CTA.
+4. **Section jobs**, for landing and content pages.
+5. **Older adults**, when the brand or audience skews 50+ (e.g. hearing, medical alert, AARP, NCOA).
 
 If a context isn't covered here, research it (SKILL.md, Step 1).
 
@@ -163,6 +165,20 @@ The partner's name is the trust signal. The page has to use it without confusing
 - **Click-to-call and hours** for audiences that prefer the phone.
 - **Load the Older adults modifier** when the partner's audience is 50+.
 
+## Email
+
+The reader decides in the inbox (open or not), then again in the first screen (click or not).
+
+- **Subject and preheader work as a pair.** The subject earns the open, and the preheader extends or contrasts it. Never repeat it.
+- **One job per email.** Each block has one job; if two blocks say the same thing, cut one.
+- **Hero establishes relevance in one sentence,** with one visual and one CTA (or none).
+- **One primary CTA** with a specific outcome ("Get my quote", not "Learn more"), visible in the first mobile screen. A secondary CTA only if the primary ask is heavy.
+- **Value before the ask.**
+- **Match the relationship stage:** welcome, re-engagement, promotional, and transactional emails read differently.
+- **Survives dark mode and plain text.** CTAs and links stand out from body text on mobile.
+- **Footer:** unsubscribe, physical address, and legal copy, functional and not hidden.
+- **Message match with the landing page:** same headline idea, CTA wording, offer, and proof.
+
 ---
 
 ## Trust factors (always load)
@@ -178,6 +194,32 @@ Users decide in seconds whether to believe a page. Check that each of these is p
 - **Consistency:** price, rating, offer, and product facts identical everywhere they appear. A mismatch costs more trust than a missing element.
 - **Polish near money:** no layout bugs, overflow, or typos around price, the CTA, or checkout cues (aesthetic-usability effect).
 - **No pressure tactics:** no fake timers, pre-checked boxes, or guilt-trip declines.
+
+## Conversion zone (load when there's a primary CTA)
+
+The space around the primary action decides whether users act.
+
+- **The primary action is the most dominant element in the zone.** Anything with equal visual weight competes with it.
+- **Neighbors stay passive.** Trust badges and callouts next to the CTA shouldn't look like pills or buttons.
+- **Social proof sits right by the ask,** not sections away.
+- **Standard controls** (quantity, dropdowns, configuration) are visually quieter than the CTA.
+- **One job per zone.** Several actions in the same zone lower conversion.
+- **Offer or product named before the action,** so users confirm they're in the right place.
+
+## Section jobs (landing and content pages)
+
+Each section has a job. Flag a section that doesn't do its job, or doesn't need to exist.
+
+- **Hero:** establish relevance in one sentence and make the primary action visible.
+- **Value props:** answer "why should I care" with specifics, not adjectives.
+- **Social proof:** reduce risk, with the most credible signal closest to the ask.
+- **How it works:** answer "how do I get this" with steps or a diagram, not prose.
+- **Expert or specialist:** anchor credibility to a person or credential.
+- **FAQs:** real objections users would actually ask, not filler.
+- **Secondary CTA:** another shot at the action for users who are now ready.
+- **Footer:** functional, not decorative.
+
+Also check that the order follows the decision: what is it → why care → how it works → how to get it. When sections stack on mobile, the order must still work.
 
 ## Older adults (50+) — audience modifier
 

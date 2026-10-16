@@ -1,6 +1,6 @@
 ---
 name: design-audit
-description: Judges whether a new Figma design is the best it can be for its context. Covers PDPs, collection pages, homepages, quiz results, partner co-branded pages, long-form content pages, affiliate reviews and best-of roundups, comparison pages, landing pages (paid social, paid search / PMax, email, lead-gen / quiz), and product blocks. Benchmarks the design against best practices for its traffic source and against UX laws, then returns a short, scannable list of issues grounded in how users will actually behave on the page. Use when someone shares a Figma design and asks to "audit this design", "review this landing page", "is this the best it can be", "QA this before handoff", "check this product block", "review this PDP", or "is this ready for dev". For auditing a live page or email to plan a redesign, use redesign-audit. For writing the dev spec, use dev-handoff.
+description: Judges whether a design is the best it can be for its context, whether it is a new Figma design, a live page, or an email. Covers PDPs, collection pages, homepages, quiz results, partner co-branded pages, long-form content pages, affiliate reviews and best-of roundups, comparison pages, landing pages (paid social, paid search / PMax, email, lead-gen / quiz), product blocks, and emails. Benchmarks the design against best practices for its traffic source and against UX laws, then returns a short, scannable list of issues grounded in how users will actually behave on the page. Use when someone shares a Figma design and asks to "audit this design", "review this landing page", "is this the best it can be", "QA this before handoff", "check this product block", "review this PDP", "audit this page/flow/email", "run a UX audit", "review this live URL", or "is this ready for dev". For writing the dev spec, use dev-handoff.
 ---
 
 # Design Audit
@@ -9,8 +9,7 @@ Answers one question: **is this the best design for its context, and is it ready
 
 | Skill | Question | Input | When |
 |---|---|---|---|
-| redesign-audit | What's wrong with what's live? | Live page, email, or current design | Before a redesign |
-| **design-audit** | Is this new design the best it can be? | New Figma design | After design, before handoff |
+| **design-audit** | Is this the best it can be? | New Figma design, live URL, or email | Before a redesign, or after design and before handoff |
 | dev-handoff | Can dev build it without questions? | Approved Figma design | Handoff |
 
 **The bar:** the best practices for this design type and traffic source (`references/playbooks.md`), plus UX laws (`references/ux-laws.md`). A finding is any gap between the design and that bar. Don't just critique how the design was executed.
@@ -26,31 +25,40 @@ Answers one question: **is this the best design for its context, and is it ready
 - Never show check names or IDs.
 - Treat placeholder content as real: "X,XXX reviews" is a number, "$XX.XX" is a price, "Product Name" is a name. Never flag placeholder copy.
 - Report gaps only. Skip anything that already meets the bar.
-- If something can't be confirmed from a static design, list it under **Verify in build**. Don't guess.
+- If something can't be confirmed from a static design, list it under **Verify in build**. Don't guess. (On a live URL, test it instead.)
 - Chat first. Once the user has reviewed the chat output, write the notes to Figma (Step 7).
 
 ## Step 0 — Look, then ask
 
-Take one `get_screenshot` of the linked node first, so your questions can name real frames and sections. Then use AskUserQuestion only for what's still missing:
+Look at what you were given first, so your questions can name real frames and sections. For a Figma link, take one `get_screenshot` of the linked node. For a live URL, open it in the browser and screenshot it at 390px and 1440px. Then use AskUserQuestion only for what's still missing:
 
-- **Brand**, if it isn't visible in the design
+- **Input type:** Figma design · live page URL · email (a Figma frame or a preview link). To get Figma notes for a live page or email, you also need a Figma file to annotate.
+- **Brand**, if it isn't visible. These brands have known context, so proceed without asking:
+  - **Internal:** Aging in Place (AIP), BarBend (BB), Garage Gym Reviews (GGR), Mattress Clarity (MC), Mattress Nerd (MN), Pillar4 (P4), Sleepopolis (SO), Sleep Advisor (SA), Swolverine (SWOL).
+  - **Partner:** AARP, Audien (AUD), Fortune (FOR), Eargo (EAR), Medical Alert (MA), Medical Guardian (MG), NCOA.
+
+  For any other brand, ask for links to its site or brand guidelines, and whether to design toward its current direction. Then run a short research pass on its positioning and audience.
 - **Design type:** PDP · collection / category page · homepage · long-form content page · affiliate review / best-of roundup · comparison page · quiz results page · partner co-branded page · landing page (and traffic source: paid social, paid search / PMax, email, lead-gen / quiz) · product block
 - **Audience**, if it skews 50+ (loads the older-adults modifier)
 - **Primary action**, and the KPI if known
 - **Breakpoints:** which frames are real breakpoints and which are reference only
 - **Out of scope:** already-built components (header, footer, nav). Still check *which version* the page uses (e.g. full nav on a paid landing page), but not the component's internals.
 - **Landing pages:** the ad or email creative, if available
+- **Emails:** the email type (welcome, re-engagement, promotional, transactional) and the landing page it links to, if it's in scope
 
 These match dev-handoff's intake. If dev-handoff runs next, reuse the answers.
 
 ## Step 1 — Set the bar
 
-- From `references/playbooks.md`, load the design-type playbook, **Trust factors** (always), and **Older adults** if the audience skews 50+. Load all of `references/ux-laws.md`.
+- From `references/playbooks.md`, load the design-type playbook, **Trust factors** (always), **Conversion zone** (whenever there's a primary CTA), **Section jobs** (landing and content pages), and **Older adults** if the audience skews 50+. Load all of `references/ux-laws.md`.
 - If the context isn't covered (a new platform, vertical, or format), run 2–3 web searches for current best practices. Prefer Baymard, NN/g, and platform docs (Meta, Google Ads).
 - For paid social, judge mobile first.
 
 ## Step 2 — Read the design
 
+**Live URL:** in the browser, screenshot each section at 390px and 1440px. Read the text with `get_page_text` and the structure with `read_page`. Use `javascript_tool` to measure contrast (computed colors), target sizes (bounding boxes), and heading order. Measured values count as measured, not estimated. Test hover, focus, and keyboard where you can, and leave only what you couldn't test under **Verify in build**.
+
+**Figma (including email frames):**
 - Invoke `figma:figma-use` before any `use_figma` call.
 - For each breakpoint (in parallel), run a read-only `use_figma` script that returns all text, a deduplicated type ramp, and contrast against the nearest solid background. Don't call `get_metadata` on large sections.
 - Second pass: component variant definitions (from the COMPONENT_SET), interactive element sizes, and media fills (image or video).
@@ -63,7 +71,11 @@ List every section or component × breakpoint × state: default, hover, focus, s
 
 ## Step 4 — Walk the page as the user
 
-Run `references/checks.md` in order: land → understand → trust → act → keep moving → everyone → real-world states. Skip checks whose **Applies** doesn't match the design type.
+Run `references/checks.md` in order: land → understand → trust → act → keep moving → everyone → real-world states (→ email, for emails). Skip checks whose **Applies** doesn't match the design type.
+
+When several screens or assets are in scope, also check them against each other:
+- **Same file:** the same action uses the same CTA wording everywhere; trust signals sit in the same place on same-template pages; the heading hierarchy doesn't change between screens.
+- **Email → landing page:** the email headline matches the hero, the CTA wording matches the page's button or form, the offer is the same, and the page makes no proof claims the email didn't.
 
 Then compare the design against every item in the loaded playbooks. Anything recommended there that is **absent** from the design becomes a recommendation, unless a finding already covers it.
 
@@ -112,7 +124,7 @@ Leave out empty groups. Stop after the list, then wait for the user to review be
 
 ## Step 7 — Write notes to Figma
 
-Run this after the user reviews the chat output, or when they ask for notes in Figma. Never edit the design frames themselves.
+Run this after the user reviews the chat output, or when they ask for notes in Figma. Never edit the design frames themselves. For a live page or email with no Figma file, ask for a file to annotate (with screenshots pasted in), or skip this step and say so.
 
 - **Which breakpoint:** put notes on the mobile frame. Add notes to the desktop frame only for issues that differ from mobile (desktop-only layout, line length, empty columns). If there's no mobile frame, put every note on desktop.
 - **Where:** a column of notes in the empty space to the right of each annotated frame, inside the same section, 30px from the frame. If the section is too narrow for the column, widen the section (`resizeWithoutConstraints`). Never move the frames. Each note sits at the height of its issue. Notes stack downward without overlapping, and a note drops below any element that sticks out into the column.
