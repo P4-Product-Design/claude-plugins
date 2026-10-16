@@ -1,8 +1,8 @@
 # dev-handoff
 
-A Claude Code plugin that turns a Figma design into a complete, engineer-ready handoff. From a Figma link plus feature context, brand, and KPIs, it reads the whole design, drafts an exhaustive spec, and writes it back into Figma as two frames — **Requirements & Edge Cases** and **Dev Spec Handoff** — then applies native **Dev Mode** annotations to the design across breakpoints.
+A Claude Code plugin that turns a Figma design into a complete, engineer-ready handoff. From a Figma link plus feature context, brand, and KPIs, it reads the whole design, drafts a short, scannable spec, and writes it back into Figma as two frames — **Requirements & Edge Cases** and **Dev Spec Handoff** — then applies native **Dev Mode** annotations for the changes between breakpoints.
 
-The bar it holds to: a handoff is done when an engineer can build the feature without coming back with questions. It marks every interactive state, maps affiliate product fields to GPV, flags unknowns with an owner, and treats mobile as equal to desktop.
+The bar it holds to: a handoff is done when an engineer can build the feature without coming back with questions. It marks every interactive state, maps product fields to Shopify (SWOL) or GPV (affiliate products), lists every unknown, and pulls in findings from `Audit · …` notes left by a design audit.
 
 **Owner:** Chance Chipman. Install it from the [P4 plugin marketplace](../../README.md#install-one-time-per-person), which has every P4 plugin in one place.
 
@@ -16,7 +16,7 @@ Start a request with a Figma link and the feature context, e.g.:
 
 > Write up the dev handoff for this comparison tool: `<figma link with node-id>` — brand is SO, primary KPI is Take Rate.
 
-If you don't give enough to start (a dev-ready Figma link, feature/test context, brand, and KPIs), the skill asks for exactly what's missing before drafting — it won't guess. It presents both drafts for your approval before writing anything to Figma, and asks which breakpoint frames to annotate before touching the design.
+It asks for the Figma link and any pre-existing audit notes first, reads the design, then asks one round of questions about whatever the design couldn't answer (context, brand, KPI, breakpoints, scope). It presents the drafts for your approval before writing anything to Figma.
 
 ## What's in this plugin
 
