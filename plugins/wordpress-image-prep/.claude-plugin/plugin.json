@@ -1,6 +1,6 @@
 {
   "name": "wordpress-image-prep",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turns Central Testing photos (HEIC or JPG) into WordPress-ready WebP images: 800px wide, cropped to 450px tall around the subject, renamed for SEO.",
   "author": {
     "name": "Chance Chipman",

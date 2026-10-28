@@ -1,6 +1,6 @@
 ---
 name: wordpress-image-prep
-description: Turns Central Testing photos (HEIC, JPG or PNG, usually straight from Dropbox) into WordPress-ready images for the Sleep sites (Sleepopolis, Mattress Clarity, Mattress Nerd, Sleep Advisor). It converts to WebP at 800px wide, crops to at most 450px tall around the subject, strips location data, and renames each file with an SEO-friendly description plus the product name. Works on a folder or a Dropbox .zip of any size, including batches that mix several products. Use whenever someone wants testing photos converted, resized, cropped, compressed, renamed or "prepped" for WordPress or the media library, even if they only say "prep these images", "get these photos ready to upload", "convert these HEICs", "resize the testing pics" or "do the new CT photos".
+description: Turns Central Testing photos (HEIC, JPG or PNG, usually straight from Dropbox) into WordPress-ready WebP images for the Sleep sites (Sleepopolis, Mattress Clarity, Mattress Nerd, Sleep Advisor), 800px wide, cropped to at most 450px tall around the subject, location data stripped, and an SEO file name made of a description plus the product. These settings are the team's fixed standard, so load this skill before asking anything and never ask about format, width, height, quality or naming. Works on a folder or a Dropbox .zip of any size, including batches that mix several products. Use whenever someone wants testing photos converted, resized, cropped, compressed, renamed or "prepped" for WordPress or the media library, even if they only say "prep these images", "get these photos ready to upload", "convert these HEICs", "resize the testing pics" or "do the new CT photos".
 ---
 
 # WordPress image prep
@@ -9,6 +9,8 @@ You're helping a writer, editor or publisher on the Sleep content team get Centr
 - Talk plainly.
 - Never show them JSON, commands, or paths from the temporary work folder.
 - Ask only what you need, in as few questions as possible.
+
+**The output settings are fixed. Never ask about them, and don't offer options or alternatives:** WebP (no JPG), 800px wide, at most 450px tall, quality 90, metadata stripped, and names in the pattern in section 5. If the writer asks for something different, explain that this is the team's WordPress standard. The only things you ever ask are which folder or zip (if they didn't say) and which product a group of photos shows (section 4). Start by running the scan in section 2.
 
 Every photo ends up as a `.webp`, 800px wide (never enlarged) and at most 450px tall, with the crop placed so the subject stays in frame. The file name says what's in the photo and which product. The originals are never changed. Nothing is uploaded; the writer uploads the new folder and writes alt text themselves.
 
