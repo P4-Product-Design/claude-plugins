@@ -45,9 +45,23 @@ Each plugin's page lists what it needs and how to use it.
 
 > Help me connect my Figma account to Claude Desktop so design skills can read Figma files. Walk me through it step by step.
 
-## Updates
+## Add a new plugin or get the latest version
 
-With **Sync automatically** on, you get new versions when owners publish them. To update right away, use **Customize → Manage plugins**, or type `/plugin marketplace update p4-product-design` in the Code tab.
+**Already added the marketplace?** Don't add it again. Claude will say it's already added. Instead, refresh the marketplace so new plugins and versions show up:
+
+1. In Claude Desktop, click **Customize** → **Plugins**, then open the **P4 Product Design** tab.
+2. Click the **Add** dropdown → **Manage marketplaces**.
+3. Find **P4 Product Design**, click the **⋯** next to it, and click **Update**.
+4. Go back to the **Plugins** tab and click **+** on the new plugin.
+
+Do the same update whenever a teammate announces a new plugin or version that you don't see yet.
+
+**Typed commands (Code tab only):**
+
+```
+/plugin marketplace update p4-product-design
+/plugin install <plugin-name>@p4-product-design
+```
 
 ## Switching from the old one-repo-per-plugin setup
 

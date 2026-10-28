@@ -116,5 +116,5 @@ The org homepage at https://github.com/P4-Product-Design shows the plugin table 
 2. Give the person a short message they can post. Include:
    - What's new, and the version.
    - Who it's for.
-   - **For a new plugin:** "In Claude Desktop, go to Customize → Plugins → the p4-product-design tab and click + on <name>."
+   - **For a new plugin:** "In Claude Desktop, go to Customize → Plugins → the P4 Product Design tab → Add → Manage marketplaces → ⋯ next to P4 Product Design → Update. Then click + on <name> in the Plugins tab." People who already added the marketplace need that Update step, or the new plugin won't appear.
    - **For an update:** "You'll get it automatically on your next sync, or now via Customize → Manage plugins."
