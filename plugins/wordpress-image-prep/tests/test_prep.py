@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import date
 
 from PIL import Image
 
@@ -32,9 +33,10 @@ class PrepTest(unittest.TestCase):
         helpers.make_file(os.path.join(self.src, "clip.mov"))
         self.before = {p: digest(p) for p in (self.a, self.b, self.c)}
 
-    def manifest(self, scan, names, **extra):
-        data = {"output_dir": scan["output_dir"], "images": [
-            {"source": p, "name": n, "focus_y": 0.5} for p, n in zip((self.a, self.b, self.c), names)]}
+    def manifest(self, scan, names, products=("DLX Mattress", "DLX Mattress", "Saatva Classic"), **extra):
+        data = {"output_parent": scan["output_parent"], "images": [
+            {"source": p, "name": n, "product": pr, "focus_y": 0.5}
+            for p, n, pr in zip((self.a, self.b, self.c), names, products)]}
         data.update(extra)
         path = os.path.join(scan["work_dir"], "manifest.json")
         with open(path, "w") as f:
@@ -47,7 +49,7 @@ class PrepTest(unittest.TestCase):
         self.assertEqual(len(scan["images"]), 3)
         self.assertEqual(scan["skipped"], [{"path": os.path.join(self.src, "clip.mov"), "reason": "video"}])
         self.assertEqual([g["count"] for g in scan["groups"]], [1, 2])  # May shoot first, then June
-        self.assertEqual(scan["output_dir"], self.src + " - WordPress")
+        self.assertEqual(scan["output_parent"], self.tmp)
         by_path = {i["path"]: i for i in scan["images"]}
         self.assertEqual(by_path[self.c]["subfolder_hint"], "Saatva Classic")
         self.assertIsNone(by_path[self.a]["filename_hint"])
@@ -58,6 +60,9 @@ class PrepTest(unittest.TestCase):
         names = ["Side sleeper test on the DLX mattress", "side-sleeper-test-dlx-mattress", "full view saatva classic mattress"]
         code, result = run("apply", self.manifest(scan, names))
         self.assertEqual(code, 0, result)
+        self.assertEqual(result["output_dir"],
+                         os.path.join(self.tmp, f"DLX Mattress + Saatva Classic - WordPress {date.today().isoformat()}"))
+        self.assertEqual([r["product"] for r in result["results"]], ["DLX Mattress", "DLX Mattress", "Saatva Classic"])
         outs = sorted(os.listdir(result["output_dir"]))
         self.assertEqual(outs, ["full-view-saatva-classic-mattress.webp", "side-sleeper-test-dlx-mattress-2.webp",
                                 "side-sleeper-test-dlx-mattress.webp"])
@@ -69,7 +74,7 @@ class PrepTest(unittest.TestCase):
         self.assertGreater(result["bytes_before"], result["bytes_after"])
 
         code, again = run("apply", self.manifest(scan, names))
-        self.assertEqual(again["output_dir"], self.src + " - WordPress (2)")
+        self.assertEqual(again["output_dir"], result["output_dir"] + " (2)")
 
     def test_apply_rejects_bad_manifest_and_writes_nothing(self):
         _, scan = run("scan", self.src)
@@ -77,14 +82,22 @@ class PrepTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertFalse(result["ok"])
         self.assertEqual(len(result["problems"]), 1)
-        self.assertFalse(os.path.exists(scan["output_dir"]))
+        self.assertEqual(os.listdir(self.tmp), ["Batch"])
+
+    def test_apply_needs_a_product_for_every_photo(self):
+        _, scan = run("scan", self.src)
+        code, result = run("apply", self.manifest(scan, ["a dlx mattress", "b dlx mattress", "c dlx mattress"],
+                                                  products=("DLX Mattress", "", "DLX Mattress")))
+        self.assertEqual(code, 1)
+        self.assertEqual([p["source"] for p in result["problems"]], [self.b])
+        self.assertEqual(os.listdir(self.tmp), ["Batch"])
 
     def test_apply_preview_writes_into_work_dir(self):
         _, scan = run("scan", self.src)
         code, result = run("apply", "--preview", self.manifest(scan, ["a dlx mattress", "b dlx mattress", "c dlx mattress"]))
         self.assertEqual(code, 0)
         self.assertEqual(result["output_dir"], os.path.join(scan["work_dir"], "preview"))
-        self.assertFalse(os.path.exists(scan["output_dir"]))
+        self.assertEqual(os.listdir(self.tmp), ["Batch"])
 
     def test_scan_zip(self):
         import shutil
@@ -92,7 +105,7 @@ class PrepTest(unittest.TestCase):
         code, scan = run("scan", zip_path)
         self.assertEqual(code, 0)
         self.assertEqual(len(scan["images"]), 3)
-        self.assertEqual(scan["output_dir"], os.path.join(self.tmp, "Batch - WordPress"))
+        self.assertEqual(scan["output_parent"], self.tmp)
 
 
 if __name__ == "__main__":

@@ -117,7 +117,12 @@ Claude can use a plain description when no term fits (`pillow-loft-measurement`)
 
 ## 7. Output
 
-- **Location:** a new folder next to the input folder or zip, named `<input name> - WordPress`. If that name is taken, use `<input name> - WordPress (2)`, and so on. Never overwrite anything, and never change the originals. If the input is inside a synced Dropbox folder, the output syncs back on its own.
+- **Location:** a new folder next to the input folder or zip, named after the batch's products and the day it was made, so back-to-back batches never share a folder (Mel's request):
+  - one product: `Helix Midnight Luxe - WordPress 2026-10-28`
+  - two: `Helix Midnight Luxe + DLX Mattress - WordPress 2026-10-28`
+  - three or more: `Helix Midnight Luxe + 2 more - WordPress 2026-10-28`
+
+  Products appear as the writer typed them, in batch order, with characters Windows doesn't allow removed. The product part is capped at 60 characters. If the name is taken (the same product twice in one day), add ` (2)`, ` (3)` and so on. Never overwrite anything, and never change the originals. If the input is inside a synced Dropbox folder, the output syncs back on its own.
 - **Contents:** only the `.webp` files. No logs or sidecar files.
 - **Report in chat:** a table of original → new name, product, product source (file name, folder, or "you told me"), and final pixel size. Below it: skipped files with the reason, and the total size before and after.
 
@@ -150,9 +155,9 @@ plugins/wordpress-image-prep/
 - Prints JSON for Claude.
 
 **`prep.py apply [--preview] <manifest.json>`**
-- Manifest: the output folder, plus for each image its source path, new file name, `focus_y`, and optional `rotate`.
+- Manifest: the folder the output goes in, plus for each image its source path, new file name, product, `focus_y`, and optional `rotate`. The script names the output folder from the products (section 7).
 - `--preview` writes into the temporary work folder instead. Claude previews first, checks the crops, adjusts `focus_y`, and only then writes the real folder. That way the real folder is written once.
-- Checks the manifest (names follow section 6, no duplicates, `focus_y` between 0 and 1), then processes each image (section 4).
+- Checks the manifest (names follow section 6, no duplicates, every photo has a product, `focus_y` between 0 and 1), then processes each image (section 4).
 - Writes a crop-check contact sheet of the finished files for Claude to look over before reporting.
 - Prints JSON: per file, the output path, size in pixels and KB, or an error.
 
@@ -180,7 +185,7 @@ plugins/wordpress-image-prep/
 - No EXIF or GPS data in any output.
 - Originals unchanged (checksums match before and after).
 - `scan` proposes two groups (5 and 2).
-- Re-running doesn't overwrite; it creates `… - WordPress (2)`.
+- The output folder is named `<product> - WordPress <date>`; re-running the same day doesn't overwrite, it creates `… (2)`.
 - A 600px-wide test image isn't upscaled.
 - A `.mov` in the folder is skipped and listed.
 

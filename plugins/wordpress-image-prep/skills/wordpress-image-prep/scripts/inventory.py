@@ -14,6 +14,8 @@ GENERIC_FOLDERS = {"images", "image", "photos", "photo", "pictures", "pics", "te
                    "central testing", "central testing images", "wordpress"}
 _CAMERA = re.compile(r"(?<![A-Za-z])(img|dsc|dscn|pxl|mvimg)[_\- ]?\d+", re.I)
 _DATE_LIKE = re.compile(r"^\d{4}[-_. ]?\d{2}([-_. ]?\d{2})?$")
+_UNSAFE = re.compile(r'[<>:"/\\|?*\x00-\x1f]+')  # characters Windows won't allow in a folder name
+MAX_LABEL = 60
 
 
 def unpack(src, work_dir):
@@ -136,10 +138,26 @@ def free_dir(path):
     return f"{path} ({n})"
 
 
-def output_dir_for(src):
-    """'<input name> - WordPress' next to the input folder or zip, made unique."""
-    src = os.path.abspath(src.rstrip("/\\"))
-    base = os.path.basename(src)
-    if base.lower().endswith(".zip"):
-        base = base[:-4]
-    return free_dir(os.path.join(os.path.dirname(src), f"{base} - WordPress"))
+def output_parent_for(src):
+    """The folder the output goes in: the one holding the input folder or zip."""
+    return os.path.dirname(os.path.abspath(src.rstrip("/\\")))
+
+
+def clean_product(product):
+    """A product name made safe for a folder name on Windows and Mac."""
+    return re.sub(r"\s+", " ", _UNSAFE.sub(" ", product or "")).strip(" .")
+
+
+def folder_name(products, day):
+    """'<product> - WordPress YYYY-MM-DD' from the batch's products, in batch order: 'A', 'A + B' or 'A + N more'."""
+    names = []
+    for product in map(clean_product, products):
+        if product and product.lower() not in {n.lower() for n in names}:
+            names.append(product)
+    if not names:
+        raise ValueError("there's no product name to name the folder after")
+    label = " + ".join(names)
+    if len(names) > 2 or len(label) > MAX_LABEL:
+        rest = f" + {len(names) - 1} more" if len(names) > 1 else ""
+        label = names[0][:MAX_LABEL - len(rest)].rstrip(" .") + rest
+    return f"{label} - WordPress {day.isoformat()}"

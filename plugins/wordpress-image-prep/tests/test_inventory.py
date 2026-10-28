@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 import zipfile
-from datetime import datetime
+from datetime import date, datetime
 
 import helpers
 import inventory
@@ -22,6 +22,37 @@ class HintTest(unittest.TestCase):
         self.assertIsNone(inventory.subfolder_hint("/batch/Photos/a.jpg", root))
         self.assertIsNone(inventory.subfolder_hint("/batch/2025-06-19/a.jpg", root))
         self.assertIsNone(inventory.subfolder_hint("/batch/a.jpg", root))
+
+
+class FolderNameTest(unittest.TestCase):
+    DAY = date(2026, 10, 28)
+
+    def test_one_product(self):
+        self.assertEqual(inventory.folder_name(["DLX Mattress", "dlx mattress"], self.DAY),
+                         "DLX Mattress - WordPress 2026-10-28")
+
+    def test_two_products_in_batch_order(self):
+        self.assertEqual(inventory.folder_name(["Helix Midnight Luxe", "DLX Mattress", "Helix Midnight Luxe"], self.DAY),
+                         "Helix Midnight Luxe + DLX Mattress - WordPress 2026-10-28")
+
+    def test_three_or_more_products(self):
+        self.assertEqual(inventory.folder_name(["DLX Mattress", "Helix", "Saatva Classic"], self.DAY),
+                         "DLX Mattress + 2 more - WordPress 2026-10-28")
+
+    def test_removes_characters_windows_rejects(self):
+        self.assertEqual(inventory.folder_name(['Nectar 14" / Premier: v2?.'], self.DAY),
+                         "Nectar 14 Premier v2 - WordPress 2026-10-28")
+
+    def test_long_names_are_shortened(self):
+        long_a, long_b = "Brooklyn Bedding Aurora Luxe Cooling Hybrid", "Serta Perfect Sleeper X Mattress"
+        self.assertEqual(inventory.folder_name([long_a, long_b], self.DAY),
+                         long_a + " + 1 more - WordPress 2026-10-28")
+        name = inventory.folder_name(["x" * 100], self.DAY)
+        self.assertEqual(name, "x" * inventory.MAX_LABEL + " - WordPress 2026-10-28")
+
+    def test_needs_a_product(self):
+        with self.assertRaises(ValueError):
+            inventory.folder_name(["", " ? "], self.DAY)
 
 
 class GroupTest(unittest.TestCase):
@@ -76,12 +107,11 @@ class FilesTest(unittest.TestCase):
         os.makedirs(base + " (2)")
         self.assertEqual(inventory.free_dir(base), base + " (3)")
 
-    def test_output_dir_for_zip_and_folder(self):
+    def test_output_parent_for_zip_and_folder(self):
         folder = os.path.join(self.tmp, "Central Testing Images")
         os.makedirs(folder)
-        self.assertEqual(inventory.output_dir_for(folder + os.sep), folder + " - WordPress")
-        self.assertEqual(inventory.output_dir_for(os.path.join(self.tmp, "batch.zip")),
-                         os.path.join(self.tmp, "batch - WordPress"))
+        self.assertEqual(inventory.output_parent_for(folder + os.sep), self.tmp)
+        self.assertEqual(inventory.output_parent_for(os.path.join(self.tmp, "batch.zip")), self.tmp)
 
     def test_read_meta(self):
         p = helpers.make_jpeg(os.path.join(self.tmp, "m.jpg"), size=(1600, 1200), orientation=6,

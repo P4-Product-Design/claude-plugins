@@ -27,7 +27,7 @@ The JSON gives:
 - `groups`: shoot groups.
 - `skipped`: videos, other files, and anything unreadable.
 - `sheets`: contact sheets.
-- `output_dir`, `work_dir`, `heic_decoder`, `notes`.
+- `output_parent` (where the new folder will go), `work_dir`, `heic_decoder`, `notes`.
 
 If `heic_decoder` is null, HEIC files can't be processed on this computer. They'll be in `skipped`. Tell the writer in one sentence and carry on with the rest.
 
@@ -99,14 +99,14 @@ Save `manifest.json` in `work_dir`:
 
 ```json
 {
-  "output_dir": "<output_dir from the scan>",
+  "output_parent": "<output_parent from the scan>",
   "images": [
-    {"source": "<path from the scan>", "name": "seated-edge-support-test-helix-midnight-luxe-mattress", "focus_y": 0.35, "rotate": 0}
+    {"source": "<path from the scan>", "name": "seated-edge-support-test-helix-midnight-luxe-mattress", "product": "Helix Midnight Luxe", "focus_y": 0.35, "rotate": 0}
   ]
 }
 ```
 
-List the images in scan order. Then run a preview:
+List the images in scan order. `product` is the product as the writer typed it (or as it appears in the file or folder name), spelled the same way for every photo of that product. The script names the new folder after it. Then run a preview:
 
 ```bash
 python3 "<this skill's base directory>/scripts/prep.py" apply --preview "<work_dir>/manifest.json"
@@ -121,11 +121,16 @@ python3 "<this skill's base directory>/scripts/prep.py" apply --preview "<work_d
 python3 "<this skill's base directory>/scripts/prep.py" apply "<work_dir>/manifest.json"
 ```
 
-This creates `output_dir` next to the originals. If that name is taken it adds ` (2)`. It never overwrites anything.
+This creates a new folder next to the originals, named after the products and today's date, so back-to-back batches never share a folder:
+- one product: `Helix Midnight Luxe - WordPress 2026-10-28`
+- two: `Helix Midnight Luxe + DLX Mattress - WordPress 2026-10-28`
+- three or more: `Helix Midnight Luxe + 2 more - WordPress 2026-10-28`
+
+If that name is taken (the same product twice in one day), it adds ` (2)`. It never overwrites anything. The folder's path is `output_dir` in the result.
 
 ## 8. Report
 
-Tell the writer where the new folder is, then show a table:
+Tell the writer the new folder's name and where it is, then show a table:
 
 | Original | New name | Product | Product from | Size |
 |---|---|---|---|---|
