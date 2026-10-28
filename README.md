@@ -38,6 +38,7 @@ Swap in any plugin name from the table below.
 | [product-block-gatherer](plugins/product-block-gatherer) | Gathers and fills product block data for Fortune Shop and NCOA Shop pages, as a Word document. | Audrey McGlynn |
 | [qual-research-simulator](plugins/qual-research-simulator) | Runs a Figma design past data-grounded personas, like a simulated usability study. | Audrey McGlynn |
 | [swolverine-product-photos](plugins/swolverine-product-photos) | Turns raw Swolverine studio shots into website-ready product images with no generative fill. Needs a Mac with Photoshop 2026. | Chance Chipman |
+| [wordpress-image-prep](plugins/wordpress-image-prep) | Turns Central Testing photos into WordPress-ready WebP images (800×450, SEO file names) for the Sleep sites. Runs in Cowork on Windows or Mac. | Chance Chipman |
 
 Each plugin's page lists what it needs and how to use it.
 
