@@ -98,6 +98,73 @@ class PrepTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(result["output_dir"], os.path.join(scan["work_dir"], "preview"))
         self.assertEqual(os.listdir(self.tmp), ["Batch"])
+        self.assertIsNone(result["review_page"])
+        self.assertFalse(os.path.exists(os.path.join(scan["work_dir"], "last-run.json")))
+
+    def test_apply_writes_review_page_beside_folder(self):
+        _, scan = run("scan", self.src)
+        code, result = run("apply", self.manifest(scan, ["a dlx mattress", "b dlx mattress", "c saatva classic mattress"]))
+        self.assertEqual(code, 0, result)
+        page = result["review_page"]
+        self.assertEqual(page, result["output_dir"] + " - review.html")
+        self.assertTrue(os.path.isfile(page))
+        self.assertNotIn("review.html", " ".join(os.listdir(result["output_dir"])))
+        with open(page, encoding="utf-8") as f:
+            html = f.read()
+        for r in result["results"]:
+            self.assertIn(os.path.basename(r["output"]), html)
+
+    def redo(self, scan, names, **kw):
+        return run("apply", "--redo", self.manifest(scan, names, **kw))
+
+    def test_redo_rewrites_the_same_folder(self):
+        _, scan = run("scan", self.src)
+        _, first = run("apply", self.manifest(scan, ["a dlx mattress", "b dlx mattress", "c saatva classic mattress"]))
+        out = first["output_dir"]
+        helpers.make_file(os.path.join(out, ".DS_Store"))  # Finder adds these; they don't count as foreign files
+        neighbour = helpers.make_file(os.path.join(self.tmp, "notes.txt"), b"keep me")
+        code, result = self.redo(scan, ["back sleeper test dlx mattress", "b dlx mattress", "c saatva classic mattress"])
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["output_dir"], out)
+        self.assertEqual(sorted(f for f in os.listdir(out) if not f.startswith(".")),
+                         ["b-dlx-mattress.webp", "back-sleeper-test-dlx-mattress.webp", "c-saatva-classic-mattress.webp"])
+        self.assertFalse(os.path.exists(out + " (2)"))
+        with open(neighbour, "rb") as f:
+            self.assertEqual(f.read(), b"keep me")
+        self.assertEqual({p: digest(p) for p in self.before}, self.before)
+        with open(result["review_page"], encoding="utf-8") as f:
+            self.assertIn("back-sleeper-test-dlx-mattress.webp", f.read())
+
+    def test_redo_renames_folder_when_products_change(self):
+        _, scan = run("scan", self.src)
+        _, first = run("apply", self.manifest(scan, ["a dlx mattress", "b dlx mattress", "c saatva classic mattress"]))
+        names = ["a helix mattress", "b helix mattress", "c helix mattress"]
+        code, result = self.redo(scan, names, products=("Helix Midnight Luxe",) * 3)
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["output_dir"],
+                         os.path.join(self.tmp, f"Helix Midnight Luxe - WordPress {date.today().isoformat()}"))
+        self.assertEqual(result["review_page"], result["output_dir"] + " - review.html")
+        self.assertFalse(os.path.exists(first["output_dir"]))
+        self.assertFalse(os.path.exists(first["review_page"]))
+        self.assertEqual(len(os.listdir(result["output_dir"])), 3)
+
+    def test_redo_refuses_without_a_record(self):
+        _, scan = run("scan", self.src)
+        code, result = self.redo(scan, ["a dlx mattress", "b dlx mattress", "c dlx mattress"])
+        self.assertEqual(code, 1)
+        self.assertFalse(result["ok"])
+        self.assertIn("no earlier run", result["problems"][0]["problem"])
+        self.assertEqual(os.listdir(self.tmp), ["Batch"])
+
+    def test_redo_refuses_when_folder_has_other_files(self):
+        _, scan = run("scan", self.src)
+        _, first = run("apply", self.manifest(scan, ["a dlx mattress", "b dlx mattress", "c dlx mattress"]))
+        extra = helpers.make_file(os.path.join(first["output_dir"], "extra.jpg"))
+        code, result = self.redo(scan, ["x dlx mattress", "b dlx mattress", "c dlx mattress"])
+        self.assertEqual(code, 1)
+        self.assertIn("extra.jpg", result["problems"][0]["problem"])
+        self.assertTrue(os.path.isfile(extra))
+        self.assertTrue(all(os.path.isfile(r["output"]) for r in first["results"]))
 
     def test_scan_zip(self):
         import shutil

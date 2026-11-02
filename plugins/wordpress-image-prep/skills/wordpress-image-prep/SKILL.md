@@ -10,7 +10,7 @@ You're helping a writer, editor or publisher on the Sleep content team get Centr
 - Never show them JSON, commands, or paths from the temporary work folder.
 - Ask only what you need, in as few questions as possible.
 
-**The output settings are fixed. Never ask about them, and don't offer options or alternatives:** WebP (no JPG), 800px wide, at most 450px tall, quality 90, metadata stripped, and names in the pattern in section 5. If the writer asks for something different, explain that this is the team's WordPress standard. The only things you ever ask are which folder or zip (if they didn't say) and which product a group of photos shows (section 4). Start by running the scan in section 2.
+**The output settings are fixed. Never ask about them, and don't offer options or alternatives:** WebP (no JPG), 800px wide, at most 450px tall, quality 90, metadata stripped, and names in the pattern in section 5. If the writer asks for something different, explain that this is the team's WordPress standard. The only things you ever ask are which folder or zip (if they didn't say), which product a group of photos shows (section 4), and, at the end, whether the finished images look right (section 8). Start by running the scan in section 2.
 
 Every photo ends up as a `.webp`, 800px wide (never enlarged) and at most 450px tall, with the crop placed so the subject stays in frame. The file name says what's in the photo and which product. The originals are never changed. Nothing is uploaded; the writer uploads the new folder and writes alt text themselves.
 
@@ -102,6 +102,7 @@ Save `manifest.json` in `work_dir`:
 ```json
 {
   "output_parent": "<output_parent from the scan>",
+  "skipped": [<the skipped list from the scan, as is>],
   "images": [
     {"source": "<path from the scan>", "name": "seated-edge-support-test-helix-midnight-luxe-mattress", "product": "Helix Midnight Luxe", "focus_y": 0.35, "rotate": 0}
   ]
@@ -130,12 +131,14 @@ This creates a new folder next to the originals, named after the products and to
 
 If that name is taken (the same product twice in one day), it adds ` (2)`. It never overwrites anything. The folder's path is `output_dir` in the result.
 
+It also writes a review page beside the folder (never inside it, so it isn't uploaded): `<folder name> - review.html`. Its path is `review_page` in the result. It shows every finished image, numbered, with its new name, product, original file name and size.
+
 ## 8. Report
 
-Tell the writer the new folder's name and where it is, then show a table:
+Tell the writer the new folder's name and where it is, then show a table. Number the rows in the same order as `results`; these are the numbers on the review page.
 
-| Original | New name | Product | Product from | Size |
-|---|---|---|---|---|
+| # | Original | New name | Product | Product from | Size |
+|---|---|---|---|---|---|
 
 "Product from" is "file name", "folder" or "you told me". Then list:
 - skipped files and why (videos are expected);
@@ -143,11 +146,25 @@ Tell the writer the new folder's name and where it is, then show a table:
 - photos under 800px wide, which were kept at their own width;
 - total size before and after.
 
-End with one line reminding them to write alt text in WordPress.
+Then ask them to check every image before uploading:
+
+> Open **<folder name> - review.html** (it's next to the new folder; double-click it to open it in your browser) and check each image's crop, file name and product. Reply "looks good", or give me the numbers to fix and what's wrong, like "fix 4: the crop cuts off her head" or "fix 2 and 7: that's the Helix Midnight Luxe".
+
+End with one line reminding them to write alt text in WordPress after they upload.
+
+## 9. Fix what the writer asks for
+
+For each number they give, change that photo's entry in `manifest.json`: `focus_y` for a crop (lower moves the crop up, higher moves it down), `rotate` for a sideways photo, `name` for a wrong description, `product` (and the product part of `name`) for a wrong product. Leave every other entry as it is. Then run:
+
+```bash
+python3 "<this skill's base directory>/scripts/prep.py" apply --redo "<work_dir>/manifest.json"
+```
+
+`--redo` rewrites the same folder instead of making a ` (2)` copy, and regenerates the review page. If a product change changes the folder name, it renames the folder and the review page to match; tell the writer the new name. If it refuses because the folder holds files it didn't write, tell the writer which files and ask them to move them out first. Then ask them to refresh the review page and check again. Repeat until they say it looks good.
 
 ## Rules
 
 - Never change, move or delete the originals. Never upload anything.
 - Never guess a product from a logo alone.
-- Always look at the check sheets before the real run.
+- Always look at the check sheets before the real run, and always send the writer to the review page after it.
 - If something fails, say plainly what happened and what you need from them.

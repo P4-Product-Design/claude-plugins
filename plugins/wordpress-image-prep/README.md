@@ -17,7 +17,8 @@ Turns Central Testing photos into WordPress-ready images for the Sleep sites: We
 > Prep the images in my Downloads folder for WordPress.
 
 3. Answer Claude's question about which product each group of photos shows.
-4. Upload the new folder to the site and write alt text. It's next to the originals and named after the product and the date, e.g. `Helix Midnight Luxe - WordPress 2026-10-28`.
+4. Claude puts the images in a new folder next to the originals, named after the product and the date (e.g. `Helix Midnight Luxe - WordPress 2026-10-28`), with a review page beside it (`… - review.html`). Open the review page, check every image, and tell Claude the numbers of any to fix. Claude rewrites the same folder.
+5. Upload the new folder to the site and write alt text.
 
 ## What's in this plugin
 

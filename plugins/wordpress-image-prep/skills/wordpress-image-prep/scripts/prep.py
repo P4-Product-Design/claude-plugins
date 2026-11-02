@@ -2,7 +2,8 @@
 """WordPress image prep.
 
   prep.py scan <folder-or-zip>          list the batch, group it by shoot, draw contact sheets
-  prep.py apply [--preview] <manifest>  write the WebP files the manifest describes
+  prep.py apply [--preview] <manifest>  write the WebP files the manifest describes, plus the review page
+  prep.py apply --redo <manifest>       rewrite the last run's folder after the writer asks for fixes
 
 Both print JSON on stdout. See SKILL.md for the manifest format.
 """
@@ -18,6 +19,8 @@ from datetime import date
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+RECORD = "last-run.json"  # in work_dir: what the last real apply wrote, so --redo can rewrite exactly that
+SYSTEM_FILES = {"desktop.ini", "thumbs.db"}
 
 
 def _pip_install(package):
@@ -110,30 +113,74 @@ def _check(entries):
     return problems, names
 
 
+def _load_record(path):
+    """The last real run's record, or a problem saying why --redo can't use it."""
+    if not os.path.isfile(path):
+        return None, "there's no earlier run to redo; run apply without --redo first"
+    with open(path) as f:
+        record = json.load(f)
+    out_dir = record["output_dir"]
+    if not os.path.isdir(out_dir):
+        return None, f"the folder from the last run ({out_dir}) is gone"
+    written = {os.path.basename(p) for p in record["files"]}
+    foreign = sorted(f for f in os.listdir(out_dir)
+                     if f not in written and not f.startswith(".") and f.lower() not in SYSTEM_FILES)
+    if foreign:
+        return None, (f"{os.path.basename(out_dir)} holds files this tool didn't write ({', '.join(foreign)}); "
+                      "move them out and run --redo again")
+    return record, None
+
+
+def _clear_for_redo(record, products):
+    """Delete the last run's files and review page, rename the folder if the products changed; return the folder."""
+    import inventory
+
+    for path in record["files"] + [record["review_page"]]:
+        if os.path.isfile(path):
+            os.remove(path)
+    out_dir = record["output_dir"]
+    base = inventory.folder_name(products, date.fromisoformat(record["day"]))
+    if base == record["base"]:
+        return out_dir
+    new_dir = inventory.free_dir(os.path.join(os.path.dirname(out_dir), base))
+    os.rename(out_dir, new_dir)
+    return new_dir
+
+
 def cmd_apply(args, notes):
     import imaging
     import inventory
     import naming
+    import review
     import sheets
     from PIL import Image
 
     with open(args.manifest) as f:
         manifest = json.load(f)
+    record_path = os.path.join(os.path.dirname(os.path.abspath(args.manifest)), RECORD)
     entries = manifest.get("images", [])
     problems, names = _check(entries)
-    if not args.preview and not os.path.isdir(manifest.get("output_parent", "")):
+    if not args.preview and not args.redo and not os.path.isdir(manifest.get("output_parent", "")):
         problems.append({"problem": f"output_parent {manifest.get('output_parent')!r} isn't a folder"})
+    record = None
+    if args.redo:
+        record, problem = _load_record(record_path)
+        if problem:
+            problems.insert(0, {"problem": problem})
     if problems or not entries:
         return emit({"ok": False, "problems": problems or [{"problem": "the manifest lists no images"}]}, 1)
     names = naming.assign_unique(names)
+    products = [e["product"] for e in entries]
+    day = date.fromisoformat(record["day"]) if record else date.today()
     if args.preview:
         out_dir = os.path.join(os.path.dirname(os.path.abspath(args.manifest)), "preview")
         if os.path.isdir(out_dir):
             for old in os.listdir(out_dir):
                 os.remove(os.path.join(out_dir, old))
+    elif record:
+        out_dir = _clear_for_redo(record, products)
     else:
-        out_dir = inventory.free_dir(os.path.join(
-            manifest["output_parent"], inventory.folder_name([e["product"] for e in entries], date.today())))
+        out_dir = inventory.free_dir(os.path.join(manifest["output_parent"], inventory.folder_name(products, day)))
     os.makedirs(out_dir, exist_ok=True)
     results, before, after = [], 0, 0
     for e, name in zip(entries, names):
@@ -147,8 +194,16 @@ def cmd_apply(args, notes):
         after += os.path.getsize(dest)
         results.append(dict(source=e["source"], product=e["product"], output=dest, **info))
     done = [r for r in results if "output" in r]
+    page = None
     if not done:
         os.rmdir(out_dir)
+        if record:
+            os.remove(record_path)
+    elif not args.preview:
+        page = review.write_page(out_dir, results, before, after, manifest.get("skipped", []))
+        with open(record_path, "w") as f:
+            json.dump({"output_dir": out_dir, "base": inventory.folder_name(products, day), "day": day.isoformat(),
+                       "files": [r["output"] for r in done], "review_page": page}, f, indent=2)
     thumbs = []
     for r in done:
         with Image.open(r["output"]) as im:
@@ -157,7 +212,7 @@ def cmd_apply(args, notes):
             thumbs.append((os.path.basename(r["output"]), small))
     check_dir = tempfile.mkdtemp(prefix="wordpress-image-prep-check-")
     return emit({"ok": bool(done), "output_dir": out_dir if done else None, "preview": args.preview,
-                 "notes": notes, "results": results, "bytes_before": before, "bytes_after": after,
+                 "redo": args.redo, "review_page": page, "notes": notes, "results": results, "bytes_before": before, "bytes_after": after,
                  "check_sheets": sheets.make_sheets(thumbs, check_dir, "check") if thumbs else []})
 
 
@@ -167,7 +222,9 @@ def main():
     scan = sub.add_parser("scan")
     scan.add_argument("source")
     apply_ = sub.add_parser("apply")
-    apply_.add_argument("--preview", action="store_true")
+    mode = apply_.add_mutually_exclusive_group()
+    mode.add_argument("--preview", action="store_true")
+    mode.add_argument("--redo", action="store_true")
     apply_.add_argument("manifest")
     args = parser.parse_args()
     notes = ensure_deps()

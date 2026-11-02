@@ -36,7 +36,8 @@ The skill turns a folder of CT photos into WordPress-ready images in one step: c
 3. Claude scans the batch and works out the product for each photo. It asks only about photos it can't place (section 5).
 4. Claude processes every image and writes the new folder.
 5. Claude shows a table: original name → new name, product, where the product name came from, and final size. Skipped files are listed below it.
-6. The writer uploads the new folder to WordPress and writes alt text.
+6. The writer opens the review page beside the new folder and checks every image (crop, name, product). They reply "looks good" or name the numbers to fix, and Claude rewrites the same folder until it's right.
+7. The writer uploads the new folder to WordPress and writes alt text.
 
 ## 4. Image processing rules
 
@@ -124,6 +125,7 @@ Claude can use a plain description when no term fits (`pillow-loft-measurement`)
 
   Products appear as the writer typed them, in batch order, with characters Windows doesn't allow removed. The product part is capped at 60 characters. If the name is taken (the same product twice in one day), add ` (2)`, ` (3)` and so on. Never overwrite anything, and never change the originals. If the input is inside a synced Dropbox folder, the output syncs back on its own.
 - **Contents:** only the `.webp` files. No logs or sidecar files.
+- **Review page** (added in 0.2.0, Chance's request): `<output folder name> - review.html`, written *beside* the folder, never inside it, so uploading the folder never picks it up. It is self-contained (inline CSS, no network requests) and opens by double-click in Edge, Chrome or Safari. A header gives the image count, total size before and after, and any skipped or failed files. Below it is a responsive grid of every output, numbered so the writer can say "fix 4", each showing the image (linked by relative path to the `.webp` in the folder, not a copy), new file name, product, original file name, pixel size and KB.
 - **Report in chat:** a table of original → new name, product, product source (file name, folder, or "you told me"), and final pixel size. Below it: skipped files with the reason, and the total size before and after.
 
 ## 8. How it's built
@@ -141,6 +143,7 @@ plugins/wordpress-image-prep/
     scripts/imaging.py             # open upright in sRGB, resize, crop, save WebP
     scripts/inventory.py           # find files, unzip, metadata, name hints, shoot groups, output folder
     scripts/sheets.py              # contact sheets
+    scripts/review.py              # the writer's review page
     references/spec-and-decisions.md   # this spec, kept current
   tests/                           # unittest suite for the scripts
 ```
@@ -154,12 +157,14 @@ plugins/wordpress-image-prep/
 - Writes contact sheets: 6 numbered thumbnails per sheet, each about 600px wide and already turned upright, with a line showing where an 800×450 centre crop would fall. Claude views the sheets, not the full-size files, which keeps a 50-photo batch to about 9 images. Claude can still open a single photo larger when it needs a closer look.
 - Prints JSON for Claude.
 
-**`prep.py apply [--preview] <manifest.json>`**
+**`prep.py apply [--preview | --redo] <manifest.json>`**
 - Manifest: the folder the output goes in, plus for each image its source path, new file name, product, `focus_y`, and optional `rotate`. The script names the output folder from the products (section 7).
 - `--preview` writes into the temporary work folder instead. Claude previews first, checks the crops, adjusts `focus_y`, and only then writes the real folder. That way the real folder is written once.
 - Checks the manifest (names follow section 6, no duplicates, every photo has a product, `focus_y` between 0 and 1), then processes each image (section 4).
 - Writes a crop-check contact sheet of the finished files for Claude to look over before reporting.
-- Prints JSON: per file, the output path, size in pixels and KB, or an error.
+- A real run also writes the review page (section 7) and saves a record of what it wrote (`last-run.json` in the work folder: the output folder, its date, and the files).
+- `--redo` is the fix loop. After Claude edits the manifest entries the writer asked to fix, `--redo` reads that record, deletes only the files it wrote last time, and writes again into the **same** folder instead of a ` (2)` copy. It regenerates the review page. If a product change changes the folder name, it renames the folder and the page to match, keeping the original date. It refuses if there's no record, if the folder is gone, or if the folder holds files the tool didn't write. Hidden files and Windows thumbnail files don't count.
+- Prints JSON: per file, the output path, product, size in pixels and KB, or an error; plus `output_dir` and `review_page`.
 
 **Dependencies.** Python 3 with Pillow and `pillow-heif`. The skill installs `pillow-heif` with pip on first run if it's missing. If HEIC still can't be opened, macOS falls back to `sips`. On any other system the skill stops with a plain message naming the files it couldn't open, and still processes the JPGs and PNGs.
 
@@ -172,6 +177,8 @@ plugins/wordpress-image-prep/
 | Image narrower than 800px | Keep its size, crop height only if over 450px, note it in the report |
 | Output folder name taken | Add ` (2)`, ` (3)` and so on |
 | No images found | Say so, list what was found, write nothing |
+| `--redo` with no earlier run, or the folder is gone | Refuse and say why; write nothing |
+| `--redo` finds files the tool didn't write in the folder | Refuse, name the files, and ask the writer to move them out |
 | Writer cancels partway through the product questions | Write nothing |
 | `pillow-heif` won't install | macOS falls back to `sips`. Elsewhere, process JPG/PNG and list the HEICs that weren't done |
 
@@ -188,6 +195,8 @@ plugins/wordpress-image-prep/
 - The output folder is named `<product> - WordPress <date>`; re-running the same day doesn't overwrite, it creates `… (2)`.
 - A 600px-wide test image isn't upscaled.
 - A `.mov` in the folder is skipped and listed.
+- The review page sits beside the output folder, not inside it, references every output by relative path, and has no external URLs.
+- `--redo` replaces the files in the same folder and leaves everything else alone. It renames the folder when the product changes, and refuses without a record or when the folder holds other files.
 
 **Skill checks** (run in Cowork):
 - With the current file names, Claude asks about exactly two groups.
@@ -195,6 +204,7 @@ plugins/wordpress-image-prep/
 - With two products' names mixed into one folder, each photo gets the right product.
 - Names follow section 6.
 - Chance reviews the crop-check sheet. Heads and hands in `IMG_1954` and `IMG_1955` must stay in frame.
+- After the run, Claude sends the writer to the review page. "Fix N" requests rewrite the same folder.
 
 **Pilot:** Mel runs one real batch on Windows before rollout.
 
