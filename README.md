@@ -33,7 +33,7 @@ Swap in any plugin name from the table below.
 | [design-audit](plugins/design-audit) | Audits a Figma design, live page, or email against page-type best practices and UX laws, then adds prioritized notes and research recommendations to Figma. | Chance Chipman |
 | [dev-handoff](plugins/dev-handoff) | Turns a Figma design into an engineer-ready handoff: Requirements and Dev Spec frames, plus native Dev Mode annotations for what changes between breakpoints. | Chance Chipman |
 | [figma-to-optimizely](plugins/figma-to-optimizely) | Turns a Figma design into an Optimizely Web Experiment widget (HTML, CSS, JS, widget.json) with a local preview. | Andy Ramos |
-| [figma-to-shopify-liquid](plugins/figma-to-shopify-liquid) | Converts a Figma design into a pixel-exact Shopify Liquid section or block, with matching docs and a static preview. | Chance Chipman |
+| [figma-to-shopify-liquid](plugins/figma-to-shopify-liquid) | Converts a Swolverine Figma design into a pixel-exact Shopify Liquid section or block, with matching docs and a static preview. | Chance Chipman |
 | [p4-publisher](plugins/p4-publisher) | Adds your plugin or skill to this marketplace, or publishes an update to one, with every check run first. | Chance Chipman |
 | [product-block-gatherer](plugins/product-block-gatherer) | Gathers and fills product block data for Fortune Shop and NCOA Shop pages, as a Word document. | Audrey McGlynn |
 | [qual-research-simulator](plugins/qual-research-simulator) | Runs a Figma design past data-grounded personas, like a simulated usability study. | Audrey McGlynn |

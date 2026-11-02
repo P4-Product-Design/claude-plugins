@@ -29,7 +29,7 @@
     {
       "name": "figma-to-shopify-liquid",
       "source": "./plugins/figma-to-shopify-liquid",
-      "description": "Converts a Figma design into a pixel-exact Shopify Liquid section or block, with matching documentation and a static HTML preview.",
+      "description": "Converts a Swolverine Figma design into a pixel-exact Shopify Liquid section or block for the Swolverine theme, with matching documentation and a static HTML preview.",
       "category": "development"
     },
     {

@@ -1,8 +1,8 @@
 # figma-to-shopify-liquid
 
-A Claude Code plugin that converts a Figma design into a pixel-exact Shopify Liquid theme section or block — same tokens, spacing, fonts, and breakpoints as the design — plus a documentation file and a static HTML preview for verification.
+A Claude Code plugin that converts a Swolverine Figma design into a pixel-exact Shopify Liquid section or block for the Swolverine theme — same tokens, spacing, fonts, and breakpoints as the design — plus a documentation file and a static HTML preview for verification.
 
-Built from the process used on Swolverine's PDP and Stack & Save hero components: read the design's own Dev Mode annotations instead of guessing at behavior, verify every breakpoint with measured values instead of assuming, and ask before assuming anything the design doesn't explicitly answer.
+It knows Swolverine's theme: the apps behind the data (Judge.me, Rebuy, Recharge, Klaviyo), the `swol-*` naming and scoping rules, the theme components to reuse, and the gotchas earlier builds hit. Built from the process used on Swolverine's homepage, header, footer, PDP and Stack & Save builds: read the design's own Dev Mode annotations instead of guessing at behavior, verify every breakpoint with measured values instead of assuming, and ask before assuming anything the design doesn't explicitly answer.
 
 **Owner:** Chance Chipman. Install it from the [P4 plugin marketplace](../../README.md#install-one-time-per-person), which has every P4 plugin in one place.
 
@@ -27,6 +27,8 @@ figma-to-shopify-liquid/
 ├── skills/
 │   └── figma-to-shopify-liquid/
 │       ├── SKILL.md              # the skill: step-0 intake checklist + the 11-step process
+│       ├── swolverine-theme.md   # Swolverine apps, data sources, naming, theme components, gotchas
+│       ├── figma-css-traps.md    # measured Figma-vs-CSS differences + browser-testing gotchas
 │       └── backend-data-wiring.md # pattern reference for wiring live product/review/app data
 └── README.md
 ```

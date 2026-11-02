@@ -1,13 +1,13 @@
 ---
 name: figma-to-shopify-liquid
-description: Use when converting a Figma design into a Shopify theme section or block (.liquid) — especially with separate mobile/tablet/desktop frames, an "exact match, no deviations" requirement, an existing component to match structurally, or live product/review data to wire in. Triggers on a Figma link plus a request for Liquid, a theme section/block, or a pixel-perfect implementation.
+description: Use when converting a Swolverine (SWOL) Figma design into a Shopify theme section or block (.liquid) — especially with separate mobile/tablet/desktop frames, an "exact match, no deviations" requirement, an existing component to match structurally, or live product/review data to wire in. Triggers on a Figma link plus a request for Liquid, a theme section/block, or a pixel-perfect implementation.
 ---
 
 # Figma to Shopify Liquid
 
 ## Overview
 
-Turns a Figma design into a production Shopify `.liquid` section/block that matches it exactly — same tokens, spacing, fonts, breakpoints — plus a documentation file and a static HTML preview. The core discipline: **read the design's own annotations instead of eyeballing the screenshot, verify breakpoints with measured values instead of assuming, and ask before assuming anything the design doesn't explicitly answer.**
+Turns a Swolverine Figma design into a production Shopify `.liquid` section/block for the Swolverine theme that matches it exactly — same tokens, spacing, fonts, breakpoints — plus a documentation file and a static HTML preview. The core discipline: **read the design's own annotations instead of eyeballing the screenshot, verify breakpoints with measured values instead of assuming, and ask before assuming anything the design doesn't explicitly answer.**
 
 ## Step 0 — If you weren't given enough to start
 
@@ -24,6 +24,8 @@ Check the request against the list below. **Anything already provided is settled
 6. A prior similar component in this codebase, to learn the *process* (research → build → ship pattern) and the *file conventions* (naming, folder layout) from.
 7. Any naming/folder convention for the output.
 
+**Always read `swolverine-theme.md` in this skill folder first.** It covers Swolverine's apps, data sources, naming, CSS scoping and theme quirks, so whatever it settles counts as already answered — don't re-ask it. Where it disagrees with the target file, the target file wins.
+
 Don't turn the Dev Mode annotations into a question — they get read regardless of what the user says, so just note that in passing rather than asking permission for it.
 
 Once required items 1–5 are answered, move straight to Process step 1.
@@ -33,7 +35,7 @@ Once required items 1–5 are answered, move straight to Process step 1.
 1. **Learn the codebase's conventions, separately for process and structure.** If a prior similar build exists, read it for *process* (how it was researched, audited, and shipped) and for *file conventions* (deliverable naming/layout). Read the *current/target* file (if one exists) for the *architecture* to match — block vs. section, `{% style %}` vs. a raw `<style>` tag, how granular the settings are, CSS scoping convention, existing breakpoint values. When the reference project and the target file disagree on structure, match the target — that's what you're actually editing alongside.
 2. **Pull every Figma frame.** One `get_design_context` call per breakpoint node (not just the overview frame — it usually returns sparse metadata only). Add `get_variable_defs` for exact token names/values, and keep the screenshots for visual reference.
 3. **Read every annotation, don't skip them.** Figma Dev Mode annotations surface in the `get_design_context` response as `data-development-annotations`, `data-accessibility-annotations`, and `data-content-annotations` attributes on the relevant elements. These carry the precise, unambiguous version of things a screenshot only implies — exact breakpoint pixel values, responsive image behavior, "make this adjustable" requirements. Quote them in the implementation's header comment with their node IDs, so a future editor can trace every non-obvious decision back to its source.
-4. **Diff the breakpoints using measured values, not assumptions.** Use the actual position/size numbers the tool returns to determine what really changes and at what exact pixel threshold. Breakpoints often don't land where you'd guess — two frames can be pixel-identical and only diverge at a threshold called out in an annotation (e.g. exactly 1024px, not a generic device width).
+4. **Diff the breakpoints using measured values, not assumptions.** Use the actual position/size numbers the tool returns to determine what really changes and at what exact pixel threshold. Breakpoints often don't land where you'd guess — two frames can be pixel-identical and only diverge at a threshold called out in an annotation (e.g. exactly 1024px, not a generic device width). Check the measured values against `figma-css-traps.md` — line-height rounding, stroke alignment, hug widths and vector ink boxes all differ between Figma and CSS.
 5. **Decide fixed vs. settings-driven, per value.** Match the codebase's existing convention for how much is merchant-editable. When there's no precedent, default to: hardcode exact layout/spacing values (guarantees the match holds even if someone fat-fingers a setting), expose settings for anything an annotation calls out as needing adjustability, and for anything naturally editorial (copy, images, brand colors).
 6. **Wire backend data if needed, static otherwise.** See `backend-data-wiring.md` in this skill folder for the pull-real-data-with-a-fallback pattern. If nothing needs live data, say so in a comment — saves the next editor from wondering why it isn't wired up.
 7. **Surface real ambiguities before writing any code.** In particular: blast radius (are you about to edit a shared component that other pages depend on — build a dedicated one instead if so), CMS structure for anything that doesn't map to a native setting type (e.g. multi-color text needs split fields — most rich-text editors can't preserve a custom color span), any scope decision that goes beyond what Figma explicitly shows, and deliverable format. Ask, don't assume — the annotations answer a lot, but not everything.
@@ -57,4 +59,6 @@ Once required items 1–5 are answered, move straight to Process step 1.
 
 ## Reference
 
+- `swolverine-theme.md` — Swolverine's apps, data sources, naming conventions, reusable theme components and gotchas. Read it in Step 0 on every build.
+- `figma-css-traps.md` — measured Figma-vs-CSS differences and browser-verification gotchas. Use it in Process steps 4 and 10.
 - `backend-data-wiring.md` — the pull-real-data-with-a-fallback pattern for product info, reviews, and app widgets (Judge.me, Rebuy, etc.). Load this only when Step 0 confirms backend data is in scope.
