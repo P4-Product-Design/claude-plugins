@@ -1,7 +1,7 @@
 {
   "name": "wordpress-image-prep",
-  "version": "0.2.0",
-  "description": "Turns Central Testing photos (HEIC or JPG) into WordPress-ready WebP images: 800px wide, cropped to 450px tall around the subject, renamed for SEO.",
+  "version": "0.3.0",
+  "description": "Turns Central Testing photos (HEIC or JPG) into WordPress-ready WebP images for the Sleep and Fitness sites: 800px wide, cropped to 450px tall around the subject, SEO file names, a review page and draft alt text.",
   "author": {
     "name": "Chance Chipman",
     "email": "chance.chipman@pillarfour.com"

@@ -4,15 +4,15 @@
 **Owner:** Chance Chipman
 **Requested by:** Mel Kassel (Managing Editor, Sleep)
 **Ticket:** [Claude skill for converting images](https://app.notion.com/p/3fa930dda5e0809193dee79f7b8258be)
-**Status:** draft. Implementation waits on Chance's review.
+**Status:** live. 0.3.0 adds the Fitness sites, the site-type question and draft alt text, from Shane Johnson's GGR naming rules (2026-11-04).
 
 ## 1. Purpose
 
-The Sleep editorial team publishes Central Testing (CT) photos on Sleepopolis, Mattress Clarity, Mattress Nerd and Sleep Advisor. CT drops the photos in Dropbox as large HEIC or JPG files with camera names like `IMG_1949.HEIC`, often 50+ per product. Today writers convert, resize and rename each batch by hand with online tools, which takes hours.
+The Sleep editorial team publishes Central Testing (CT) photos on Sleepopolis, Mattress Clarity, Mattress Nerd and Sleep Advisor, and the Fitness team on Garage Gym Reviews and BarBend (added in 0.3.0). CT drops the photos in Dropbox as large HEIC or JPG files with camera names like `IMG_1949.HEIC`, often 50+ per product. Today writers convert, resize and rename each batch by hand with online tools, which takes hours.
 
 The skill turns a folder of CT photos into WordPress-ready images in one step: converted to WebP, resized, cropped and given an SEO-friendly name.
 
-**Users:** writers, editors and the publisher on the Sleep content team. Most have barely used Claude, and most are on Windows. The skill has to work from plain requests like "prep these images for WordPress" with no settings to learn.
+**Users:** writers, editors and the publisher on the Sleep and Fitness content teams. Most have barely used Claude, and most are on Windows. The skill has to work from plain requests like "prep these images for WordPress" with no settings to learn.
 
 ## 2. Scope
 
@@ -21,9 +21,10 @@ The skill turns a folder of CT photos into WordPress-ready images in one step: c
 - Convert to WebP, resize, crop and rename (sections 4–6).
 - Work out which product each photo shows, including batches with more than one product (section 5).
 - Write the results to a new folder and report what was done (section 7).
+- Draft alt text for every image, in a file per product that writers review before pasting into WordPress (section 7, added in 0.3.0).
 
 **Out of scope**
-- Alt text. Writers still write it in WordPress.
+- Entering alt text in WordPress. Writers review the draft and paste it in.
 - Uploading to WordPress.
 - Videos and other non-image files. They're skipped and listed.
 - Connecting to Dropbox. Writers download the files first.
@@ -33,11 +34,12 @@ The skill turns a folder of CT photos into WordPress-ready images in one step: c
 
 1. The writer downloads the photos from Dropbox to their computer. A `.zip` is fine.
 2. In the Claude desktop app (Cowork), they point Claude at the folder or zip: "Prep the images in Downloads/Helix Midnight Luxe for WordPress."
-3. Claude scans the batch and works out the product for each photo. It asks only about photos it can't place (section 5).
-4. Claude processes every image and writes the new folder.
-5. Claude shows a table: original name → new name, product, where the product name came from, and final size. Skipped files are listed below it.
-6. The writer opens the review page beside the new folder and checks every image (crop, name, product). They reply "looks good" or name the numbers to fix, and Claude rewrites the same folder until it's right.
-7. The writer uploads the new folder to WordPress and writes alt text.
+3. Unless the writer already named the site type or a site, Claude asks whether the images are for a **Sleep** site (SA Sleep Advisor, MN Mattress Nerd, MC Mattress Clarity, SO Sleepopolis) or a **Fitness** site (GGR Garage Gym Reviews, BB BarBend). It never infers this from the photos. The answer picks the naming convention (section 6) and goes to the scripts as `site_type`.
+4. Claude scans the batch and works out the product for each photo. It asks only about photos it can't place (section 5).
+5. Claude processes every image and writes the new folder, the review page and the alt-text files.
+6. Claude shows a table: original name → new name, product, where the product name came from, and final size. Skipped files are listed below it.
+7. The writer opens the review page beside the new folder and checks every image (crop, name, product, alt text). They reply "looks good" or name the numbers to fix, and Claude rewrites the same folder until it's right.
+8. The writer uploads the new folder to WordPress and pastes in the reviewed alt text.
 
 ## 4. Image processing rules
 
@@ -72,6 +74,15 @@ A batch may hold more than one product, so the skill never asks a single "which 
 
 ## 6. Naming
 
+The site type decides the convention: Sleep (SA, MN, MC, SO) or Fitness (GGR, BB). Never choose it from what the photos show.
+
+**Both site types**
+- A trailing `.0` version drops: "Stoic 3.0" → `stoic-3`, not `stoic-3-0`. Other dotted versions stay (2.5 → `2-5`).
+- Lowercase ASCII and hyphens, no camera names, dates, sizes, tester names, or "image" / "photo" / "picture".
+- 80 characters at most; duplicates get `-2`, `-3`.
+
+### Sleep sites
+
 **Pattern:** `{description}-{brand}-{model}-{category}.webp`
 
 Description first, then the product, then the product category (`mattress`, `pillow`, `topper`, `sheets` and so on). Example: `seated-edge-support-test-helix-midnight-luxe-mattress.webp`.
@@ -104,6 +115,8 @@ Description first, then the product, then the product category (`mattress`, `pil
 
 Claude can use a plain description when no term fits (`pillow-loft-measurement`), following the same rules.
 
+Shane Johnson's naming notes include the alt-text example `edge-support-nectar-classic-hybrid.webp`. It doesn't follow the Sleep pattern (it lacks the standard term and the category word); Chance treats it as a typo, so it isn't a Sleep example. The Sleep form is `seated-edge-support-test-nectar-classic-hybrid-mattress.webp`.
+
 **Test set, with `dlx` standing in for the product name**
 
 | Original | New name |
@@ -116,6 +129,17 @@ Claude can use a plain description when no term fits (`pillow-loft-measurement`)
 | IMG_7976.JPG | `unboxing-dlx-mattress.webp` |
 | IMG_7979.jpg | `expanding-after-unboxing-dlx-mattress.webp` |
 
+### Fitness sites (added in 0.3.0)
+
+From Shane Johnson's GGR rules (2026-11-04):
+- Each name is a **descriptive phrase** that converts easily to alt text. Connecting words stay (the, of, a, on, in, into, our, for…); `naming.normalize_name` strips no filler words for Fitness.
+- People are "our tester" or "our product tester", never a real name. Across a batch the two are used about equally (alternating is fine); `our-tester` is the better choice when a name runs long. The script warns when they're uneven.
+- Product: the full name, lowercase and hyphenated. The preferred order is brand, product, version, product type when those parts can be told apart (e.g. "Stoic 3.0 Cold Plunge by Renu" → `renu-stoic-3-cold-plunge`). Otherwise the full name as given. Never invent a version or a type.
+
+Examples: `our-product-tester-stepping-into-the-renu-stoic-3-cold-plunge`, `temperature-display-on-the-control-panel-of-a-renu-stoic-3-cold-plunge-tub-2`, `close-up-of-our-tester-soaking-in-the-renu-stoic-3-cold-plunge`.
+
+Shane first applied these by running edited copies of the scripts. Since 0.3.0 they're built into the skill, so nobody needs to copy or edit scripts.
+
 ## 7. Output
 
 - **Location:** a new folder next to the input folder or zip, named after the batch's products and the day it was made, so back-to-back batches never share a folder (Mel's request):
@@ -125,8 +149,9 @@ Claude can use a plain description when no term fits (`pillow-loft-measurement`)
 
   Products appear as the writer typed them, in batch order, with characters Windows doesn't allow removed. The product part is capped at 60 characters. If the name is taken (the same product twice in one day), add ` (2)`, ` (3)` and so on. Never overwrite anything, and never change the originals. If the input is inside a synced Dropbox folder, the output syncs back on its own.
 - **Contents:** only the `.webp` files. No logs or sidecar files.
-- **Review page** (added in 0.2.0, Chance's request): `<output folder name> - review.html`, written *beside* the folder, never inside it, so uploading the folder never picks it up. It is self-contained (inline CSS, no network requests) and opens by double-click in Edge, Chrome or Safari. A header gives the image count, total size before and after, and any skipped or failed files. Below it is a responsive grid of every output, numbered so the writer can say "fix 4", each showing the image (linked by relative path to the `.webp` in the folder, not a copy), new file name, product, original file name, pixel size and KB.
-- **Report in chat:** a table of original → new name, product, product source (file name, folder, or "you told me"), and final pixel size. Below it: skipped files with the reason, and the total size before and after.
+- **Review page** (added in 0.2.0, Chance's request): `<output folder name> - review.html`, written *beside* the folder, never inside it, so uploading the folder never picks it up. It is self-contained (inline CSS, no network requests) and opens by double-click in Edge, Chrome or Safari. A header gives the image count, total size before and after, and any skipped or failed files. Below it is a responsive grid of every output, numbered so the writer can say "fix 4", each showing the image (linked by relative path to the `.webp` in the folder, not a copy), new file name, product, alt text, original file name, pixel size and KB. **Order** (0.3.0, both site types): alphabetical by new file name, with numbers compared as numbers, so a base name comes before its copies and `-2` before `-10`. The chat report table uses the same order and numbers.
+- **Alt-text files** (added in 0.3.0, both site types): one per product, beside the folder and the review page, never inside the folder. Name: `<brand-model>-alt-text-descriptions.txt`, a lowercase slug without the category word (Renu Stoic 3.0 Cold Plunge → `renu-stoic-3-alt-text-descriptions.txt`), taken from the manifest's `product_slugs`. A file from another batch is never overwritten (` (2)` is added). One line per image, `<filename>.webp: <alt text>`, in review-page order. Claude writes each `alt` in the manifest from what's visible: one plain sentence of about 125 characters, with the full product name; people are "our tester" or "our product tester", about equally across each file; near-identical shots get distinct descriptions. The script refuses alt text that is empty, over 150 characters, or starts with "Image of" / "Photo of" / "Picture of". It warns when the text runs over 125, leaves out the product name, or uses the two tester phrases unevenly. The closing chat line points the writer to the draft file to review before pasting.
+- **Report in chat:** a numbered table, in review-page order, of original → new name, product, product source (file name, folder, or "you told me"), and final pixel size. Below it: skipped files with the reason, and the total size before and after.
 
 ## 8. How it's built
 
@@ -144,6 +169,7 @@ plugins/wordpress-image-prep/
     scripts/inventory.py           # find files, unzip, metadata, name hints, shoot groups, output folder
     scripts/sheets.py              # contact sheets
     scripts/review.py              # the writer's review page
+    scripts/alttext.py             # alt-text checks and the per-product alt-text files
     references/spec-and-decisions.md   # this spec, kept current
   tests/                           # unittest suite for the scripts
 ```
@@ -158,13 +184,13 @@ plugins/wordpress-image-prep/
 - Prints JSON for Claude.
 
 **`prep.py apply [--preview | --redo] <manifest.json>`**
-- Manifest: the folder the output goes in, plus for each image its source path, new file name, product, `focus_y`, and optional `rotate`. The script names the output folder from the products (section 7).
+- Manifest: `site_type` (`sleep` or `fitness`, required), the folder the output goes in, `product_slugs` (each product's brand-model slug), plus for each image its source path, new file name, product, `alt`, `focus_y`, and optional `rotate`. The script names the output folder from the products (section 7).
 - `--preview` writes into the temporary work folder instead. Claude previews first, checks the crops, adjusts `focus_y`, and only then writes the real folder. That way the real folder is written once.
-- Checks the manifest (names follow section 6, no duplicates, every photo has a product, `focus_y` between 0 and 1), then processes each image (section 4).
+- Checks the manifest (a valid `site_type`, names follow section 6 for that site type, no duplicates, every photo has a product with a slug, alt text passes section 7's checks, `focus_y` between 0 and 1), then processes each image (section 4). Returns `warnings` for fixable issues that don't stop the run.
 - Writes a crop-check contact sheet of the finished files for Claude to look over before reporting.
-- A real run also writes the review page (section 7) and saves a record of what it wrote (`last-run.json` in the work folder: the output folder, its date, and the files).
-- `--redo` is the fix loop. After Claude edits the manifest entries the writer asked to fix, `--redo` reads that record, deletes only the files it wrote last time, and writes again into the **same** folder instead of a ` (2)` copy. It regenerates the review page. If a product change changes the folder name, it renames the folder and the page to match, keeping the original date. It refuses if there's no record, if the folder is gone, or if the folder holds files the tool didn't write. Hidden files and Windows thumbnail files don't count.
-- Prints JSON: per file, the output path, product, size in pixels and KB, or an error; plus `output_dir` and `review_page`.
+- A real run also writes the review page and the alt-text files (section 7) and saves a record of what it wrote (`last-run.json` in the work folder: the output folder, its date, the images, the review page and the alt-text files).
+- `--redo` is the fix loop. After Claude edits the manifest entries the writer asked to fix, `--redo` reads that record, deletes only the files it wrote last time, and writes again into the **same** folder instead of a ` (2)` copy. It regenerates the review page and the alt-text files. If a product change changes the folder name, it renames the folder and the page to match, keeping the original date. It refuses if there's no record, if the folder is gone, or if the folder holds files the tool didn't write. Hidden files and Windows thumbnail files don't count.
+- Prints JSON: per file in review order, its `number`, output path, product, alt text, size in pixels and KB, or an error; plus `output_dir`, `review_page`, `alt_text_files` and `warnings`.
 
 **Dependencies.** Python 3 with Pillow and `pillow-heif`. The skill installs `pillow-heif` with pip on first run if it's missing. If HEIC still can't be opened, macOS falls back to `sips`. On any other system the skill stops with a plain message naming the files it couldn't open, and still processes the JPGs and PNGs.
 
@@ -177,6 +203,8 @@ plugins/wordpress-image-prep/
 | Image narrower than 800px | Keep its size, crop height only if over 450px, note it in the report |
 | Output folder name taken | Add ` (2)`, ` (3)` and so on |
 | No images found | Say so, list what was found, write nothing |
+| Manifest has no `site_type`, or not `sleep` / `fitness` | Refuse; Claude asks the writer which site the images are for |
+| Alt text empty, over 150 characters, or starts with "Image of" | Refuse; Claude rewrites it |
 | `--redo` with no earlier run, or the folder is gone | Refuse and say why; write nothing |
 | `--redo` finds files the tool didn't write in the folder | Refuse, name the files, and ask the writer to move them out |
 | Writer cancels partway through the product questions | Write nothing |
@@ -197,6 +225,11 @@ plugins/wordpress-image-prep/
 - A `.mov` in the folder is skipped and listed.
 - The review page sits beside the output folder, not inside it, references every output by relative path, and has no external URLs.
 - `--redo` replaces the files in the same folder and leaves everything else alone. It renames the folder when the product changes, and refuses without a record or when the folder holds other files.
+- Fitness names keep connecting words (Shane's three examples) and still enforce the 80-character limit. Sleep names are unchanged.
+- A trailing `.0` version drops in both site types; 2.5 stays `2-5`.
+- Review order is natural: `a`, `a-2`, `a-10`, `b`.
+- Alt-text files sit beside the folder, one per product, correctly named, in review order, and are rewritten by `--redo`.
+- The manifest must have a `site_type`.
 
 **Skill checks** (run in Cowork):
 - With the current file names, Claude asks about exactly two groups.
@@ -205,6 +238,7 @@ plugins/wordpress-image-prep/
 - Names follow section 6.
 - Chance reviews the crop-check sheet. Heads and hands in `IMG_1954` and `IMG_1955` must stay in frame.
 - After the run, Claude sends the writer to the review page. "Fix N" requests rewrite the same folder.
+- Without a site named, Claude asks Sleep or Fitness before scanning. With "for GGR" in the request, it doesn't ask.
 
 **Pilot:** Mel runs one real batch on Windows before rollout.
 

@@ -90,17 +90,40 @@ def cmd_scan(args, notes):
                  "groups": groups, "skipped": skipped, "sheets": sheet_paths})
 
 
-def _check(entries):
+def _check(manifest):
+    """Problems that stop the run, warnings worth fixing, and each image's normalised name."""
+    import alttext
     import inventory
     import naming
 
-    problems, names = [], []
+    entries = manifest.get("images", [])
+    site_type = manifest.get("site_type")
+    if site_type not in naming.SITE_TYPES:
+        return [{"problem": f"site_type must be 'sleep' or 'fitness', got {site_type!r}. Ask the writer which "
+                            "site the images are for; never guess it from the photos"}], [], []
+    problems, warnings, names = [], [], []
+    slugs = manifest.get("product_slugs") or {}
+    seen = {}
+    for product in dict.fromkeys(e.get("product", "") for e in entries):
+        if not inventory.clean_product(product):
+            continue
+        try:
+            product_slug = naming.slug(slugs.get(product, ""))
+        except ValueError:
+            problems.append({"problem": f"product_slugs needs a brand-model slug for {product!r}"})
+            continue
+        if product_slug in seen:
+            problems.append({"problem": f"{product!r} and {seen[product_slug]!r} have the same slug {product_slug!r}"})
+        seen[product_slug] = product
     for e in entries:
         src = e.get("source", "")
         try:
-            names.append(naming.normalize_name(e.get("name", "")))
+            names.append(naming.normalize_name(e.get("name", ""), site_type))
         except ValueError as err:
             problems.append({"source": src, "problem": str(err)})
+        alt_problems, alt_warnings = alttext.check(e.get("alt", ""), e.get("product", ""))
+        problems += [{"source": src, "problem": p} for p in alt_problems]
+        warnings += [{"source": src, "warning": w} for w in alt_warnings]
         focus = e.get("focus_y", 0.5)
         if isinstance(focus, bool) or not isinstance(focus, (int, float)) or not 0 <= focus <= 1:
             problems.append({"source": src, "problem": f"focus_y must be between 0 and 1, got {focus!r}"})
@@ -110,7 +133,15 @@ def _check(entries):
             problems.append({"source": src, "problem": "every photo needs a product"})
         if not os.path.isfile(src):
             problems.append({"source": src, "problem": "file not found"})
-    return problems, names
+    for product in dict.fromkeys(e.get("product", "") for e in entries):
+        balance = alttext.tester_balance([e.get("alt", "") for e in entries if e.get("product") == product])
+        if balance:
+            warnings.append({"product": product, "warning": f"alt text: {balance}"})
+    if site_type == "fitness":
+        balance = alttext.tester_balance(names)
+        if balance:
+            warnings.append({"warning": f"file names: {balance}"})
+    return problems, warnings, names
 
 
 def _load_record(path):
@@ -135,7 +166,7 @@ def _clear_for_redo(record, products):
     """Delete the last run's files and review page, rename the folder if the products changed; return the folder."""
     import inventory
 
-    for path in record["files"] + [record["review_page"]]:
+    for path in record["files"] + [record["review_page"]] + record.get("alt_text_files", []):
         if os.path.isfile(path):
             os.remove(path)
     out_dir = record["output_dir"]
@@ -148,6 +179,7 @@ def _clear_for_redo(record, products):
 
 
 def cmd_apply(args, notes):
+    import alttext
     import imaging
     import inventory
     import naming
@@ -159,7 +191,7 @@ def cmd_apply(args, notes):
         manifest = json.load(f)
     record_path = os.path.join(os.path.dirname(os.path.abspath(args.manifest)), RECORD)
     entries = manifest.get("images", [])
-    problems, names = _check(entries)
+    problems, warnings, names = _check(manifest)
     if not args.preview and not args.redo and not os.path.isdir(manifest.get("output_parent", "")):
         problems.append({"problem": f"output_parent {manifest.get('output_parent')!r} isn't a folder"})
     record = None
@@ -168,7 +200,8 @@ def cmd_apply(args, notes):
         if problem:
             problems.insert(0, {"problem": problem})
     if problems or not entries:
-        return emit({"ok": False, "problems": problems or [{"problem": "the manifest lists no images"}]}, 1)
+        return emit({"ok": False, "problems": problems or [{"problem": "the manifest lists no images"}],
+                     "warnings": warnings}, 1)
     names = naming.assign_unique(names)
     products = [e["product"] for e in entries]
     day = date.fromisoformat(record["day"]) if record else date.today()
@@ -188,22 +221,29 @@ def cmd_apply(args, notes):
         try:
             info = imaging.process_image(e["source"], dest, e.get("focus_y", 0.5), e.get("rotate", 0))
         except Exception as err:
-            results.append({"source": e["source"], "product": e["product"], "error": str(err)})
+            results.append({"source": e["source"], "product": e["product"], "alt": e["alt"], "error": str(err)})
             continue
         before += os.path.getsize(e["source"])
         after += os.path.getsize(dest)
-        results.append(dict(source=e["source"], product=e["product"], output=dest, **info))
+        results.append(dict(source=e["source"], product=e["product"], alt=" ".join(e["alt"].split()),
+                            output=dest, **info))
     done = [r for r in results if "output" in r]
-    page = None
+    done = [done[i] for i in naming.review_order([os.path.splitext(os.path.basename(r["output"]))[0] for r in done])]
+    for n, r in enumerate(done, 1):
+        r["number"] = n
+    results = done + [r for r in results if "error" in r]  # review-page order; the chat table follows it
+    page, alt_files = None, []
     if not done:
         os.rmdir(out_dir)
         if record:
             os.remove(record_path)
     elif not args.preview:
         page = review.write_page(out_dir, results, before, after, manifest.get("skipped", []))
+        alt_files = alttext.write_files(out_dir, done, manifest["product_slugs"])
         with open(record_path, "w") as f:
             json.dump({"output_dir": out_dir, "base": inventory.folder_name(products, day), "day": day.isoformat(),
-                       "files": [r["output"] for r in done], "review_page": page}, f, indent=2)
+                       "files": [r["output"] for r in done], "review_page": page, "alt_text_files": alt_files},
+                      f, indent=2)
     thumbs = []
     for r in done:
         with Image.open(r["output"]) as im:
@@ -212,7 +252,9 @@ def cmd_apply(args, notes):
             thumbs.append((os.path.basename(r["output"]), small))
     check_dir = tempfile.mkdtemp(prefix="wordpress-image-prep-check-")
     return emit({"ok": bool(done), "output_dir": out_dir if done else None, "preview": args.preview,
-                 "redo": args.redo, "review_page": page, "notes": notes, "results": results, "bytes_before": before, "bytes_after": after,
+                 "redo": args.redo, "site_type": manifest["site_type"], "review_page": page,
+                 "alt_text_files": alt_files, "notes": notes, "warnings": warnings, "results": results,
+                 "bytes_before": before, "bytes_after": after,
                  "check_sheets": sheets.make_sheets(thumbs, check_dir, "check") if thumbs else []})
 
 

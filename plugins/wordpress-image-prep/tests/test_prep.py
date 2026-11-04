@@ -22,6 +22,14 @@ def digest(path):
         return hashlib.sha256(f.read()).hexdigest()
 
 
+SLUGS = {"DLX Mattress": "DLX", "Saatva Classic": "Saatva Classic", "Helix Midnight Luxe": "Helix Midnight Luxe"}
+
+
+def alt_file(folder, slug):
+    with open(os.path.join(folder, f"{slug}-alt-text-descriptions.txt"), encoding="utf-8") as f:
+        return f.read().splitlines()
+
+
 class PrepTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -33,10 +41,15 @@ class PrepTest(unittest.TestCase):
         helpers.make_file(os.path.join(self.src, "clip.mov"))
         self.before = {p: digest(p) for p in (self.a, self.b, self.c)}
 
-    def manifest(self, scan, names, products=("DLX Mattress", "DLX Mattress", "Saatva Classic"), **extra):
-        data = {"output_parent": scan["output_parent"], "images": [
-            {"source": p, "name": n, "product": pr, "focus_y": 0.5}
-            for p, n, pr in zip((self.a, self.b, self.c), names, products)]}
+    def manifest(self, scan, names, products=("DLX Mattress", "DLX Mattress", "Saatva Classic"), alts=None,
+                 site_type="sleep", **extra):
+        alts = alts or [f"Our tester checking shot {n} of the {pr}" for n, pr in enumerate(products, 1)]
+        data = {"output_parent": scan["output_parent"],
+                "product_slugs": {pr: SLUGS[pr] for pr in products if pr in SLUGS}, "images": [
+                    {"source": p, "name": n, "product": pr, "alt": a, "focus_y": 0.5}
+                    for p, n, pr, a in zip((self.a, self.b, self.c), names, products, alts)]}
+        if site_type is not None:
+            data["site_type"] = site_type
         data.update(extra)
         path = os.path.join(scan["work_dir"], "manifest.json")
         with open(path, "w") as f:
@@ -62,7 +75,7 @@ class PrepTest(unittest.TestCase):
         self.assertEqual(code, 0, result)
         self.assertEqual(result["output_dir"],
                          os.path.join(self.tmp, f"DLX Mattress + Saatva Classic - WordPress {date.today().isoformat()}"))
-        self.assertEqual([r["product"] for r in result["results"]], ["DLX Mattress", "DLX Mattress", "Saatva Classic"])
+        self.assertEqual([r["product"] for r in result["results"]], ["Saatva Classic", "DLX Mattress", "DLX Mattress"])
         outs = sorted(os.listdir(result["output_dir"]))
         self.assertEqual(outs, ["full-view-saatva-classic-mattress.webp", "side-sleeper-test-dlx-mattress-2.webp",
                                 "side-sleeper-test-dlx-mattress.webp"])
@@ -165,6 +178,97 @@ class PrepTest(unittest.TestCase):
         self.assertIn("extra.jpg", result["problems"][0]["problem"])
         self.assertTrue(os.path.isfile(extra))
         self.assertTrue(all(os.path.isfile(r["output"]) for r in first["results"]))
+
+    def test_site_type_is_required(self):
+        _, scan = run("scan", self.src)
+        for site_type in (None, "garden"):
+            code, result = run("apply", self.manifest(scan, ["b dlx mattress", "c dlx mattress", "d saatva mattress"],
+                                                      site_type=site_type))
+            self.assertEqual(code, 1)
+            self.assertIn("site_type", result["problems"][0]["problem"])
+        self.assertEqual(os.listdir(self.tmp), ["Batch"])
+
+    def test_fitness_names_keep_connecting_words(self):
+        _, scan = run("scan", self.src)
+        names = ["Our tester stepping into the DLX Mattress", "Our product tester lying on the DLX Mattress",
+                 "Side view of the Saatva Classic"]
+        code, result = run("apply", self.manifest(scan, names, site_type="fitness"))
+        self.assertEqual(code, 0, result)
+        self.assertEqual([os.path.basename(r["output"]) for r in result["results"]],
+                         ["our-product-tester-lying-on-the-dlx-mattress.webp",
+                          "our-tester-stepping-into-the-dlx-mattress.webp", "side-view-of-the-saatva-classic.webp"])
+
+    def test_results_and_review_page_in_name_order(self):
+        _, scan = run("scan", self.src)
+        code, result = run("apply", self.manifest(scan, ["zebra view dlx mattress", "alpha view dlx mattress",
+                                                         "zebra view dlx mattress"]))
+        self.assertEqual(code, 0, result)
+        names = [os.path.basename(r["output"]) for r in result["results"]]
+        self.assertEqual(names, ["alpha-view-dlx-mattress.webp", "zebra-view-dlx-mattress.webp",
+                                 "zebra-view-dlx-mattress-2.webp"])
+        self.assertEqual([r["number"] for r in result["results"]], [1, 2, 3])
+        with open(result["review_page"], encoding="utf-8") as f:
+            page = f.read()
+        self.assertEqual(sorted(names, key=page.index), names)
+
+    def test_alt_text_files_beside_folder_one_per_product(self):
+        _, scan = run("scan", self.src)
+        alts = ["Our tester lying on the DLX Mattress", "Our product tester sitting on the DLX Mattress",
+                "The Saatva Classic on a bed frame"]
+        code, result = run("apply", self.manifest(scan, ["zebra dlx mattress", "alpha dlx mattress",
+                                                         "full view saatva classic mattress"], alts=alts))
+        self.assertEqual(code, 0, result)
+        self.assertEqual(sorted(os.path.basename(p) for p in result["alt_text_files"]),
+                         ["dlx-alt-text-descriptions.txt", "saatva-classic-alt-text-descriptions.txt"])
+        self.assertTrue(all(os.path.dirname(p) == self.tmp for p in result["alt_text_files"]))
+        self.assertFalse(any(f.endswith(".txt") for f in os.listdir(result["output_dir"])))
+        self.assertEqual(alt_file(self.tmp, "dlx"), [
+            "alpha-dlx-mattress.webp: Our product tester sitting on the DLX Mattress",
+            "zebra-dlx-mattress.webp: Our tester lying on the DLX Mattress"])
+        self.assertEqual(alt_file(self.tmp, "saatva-classic"),
+                         ["full-view-saatva-classic-mattress.webp: The Saatva Classic on a bed frame"])
+
+    def test_bad_alt_text_or_missing_slug_is_rejected(self):
+        _, scan = run("scan", self.src)
+        names = ["b dlx mattress", "c dlx mattress", "d saatva mattress"]
+        code, result = run("apply", self.manifest(scan, names, alts=["Image of the DLX Mattress",
+                                                                     "Our tester on the DLX Mattress",
+                                                                     "The Saatva Classic"]))
+        self.assertEqual(code, 1)
+        self.assertIn("Image of", result["problems"][0]["problem"])
+        code, result = run("apply", self.manifest(scan, names, product_slugs={"DLX Mattress": "dlx"}))
+        self.assertEqual(code, 1)
+        self.assertIn("Saatva Classic", result["problems"][0]["problem"])
+        self.assertEqual(os.listdir(self.tmp), ["Batch"])
+
+    def test_redo_rewrites_alt_text_files(self):
+        _, scan = run("scan", self.src)
+        names = ["b dlx mattress", "c dlx mattress", "d saatva classic mattress"]
+        _, first = run("apply", self.manifest(scan, names))
+        alts = ["Our tester kneeling on the Helix Midnight Luxe", "Our product tester on the DLX Mattress",
+                "The Saatva Classic, side view"]
+        code, result = self.redo(scan, ["b helix midnight luxe mattress", "c dlx mattress", "d saatva classic mattress"],
+                                 products=("Helix Midnight Luxe", "DLX Mattress", "Saatva Classic"), alts=alts)
+        self.assertEqual(code, 0, result)
+        self.assertEqual(alt_file(self.tmp, "dlx"), ["c-dlx-mattress.webp: Our product tester on the DLX Mattress"])
+        self.assertEqual(alt_file(self.tmp, "helix-midnight-luxe"),
+                         ["b-helix-midnight-luxe-mattress.webp: Our tester kneeling on the Helix Midnight Luxe"])
+        self.assertEqual(alt_file(self.tmp, "saatva-classic"),
+                         ["d-saatva-classic-mattress.webp: The Saatva Classic, side view"])
+        txt = sorted(f for f in os.listdir(self.tmp) if f.endswith(".txt"))
+        self.assertEqual(txt, ["dlx-alt-text-descriptions.txt", "helix-midnight-luxe-alt-text-descriptions.txt",
+                               "saatva-classic-alt-text-descriptions.txt"])
+
+    def test_redo_removes_alt_file_of_a_product_that_left(self):
+        _, scan = run("scan", self.src)
+        names = ["b dlx mattress", "c dlx mattress", "d saatva classic mattress"]
+        run("apply", self.manifest(scan, names))
+        code, result = self.redo(scan, ["b dlx mattress", "c dlx mattress", "d dlx mattress"],
+                                 products=("DLX Mattress",) * 3)
+        self.assertEqual(code, 0, result)
+        self.assertEqual(sorted(f for f in os.listdir(self.tmp) if f.endswith(".txt")),
+                         ["dlx-alt-text-descriptions.txt"])
+        self.assertEqual(len(alt_file(self.tmp, "dlx")), 3)
 
     def test_scan_zip(self):
         import shutil

@@ -40,6 +40,71 @@ class NormalizeNameTest(unittest.TestCase):
             naming.normalize_name("the of on")
 
 
+class FitnessNameTest(unittest.TestCase):
+    """Shane Johnson's GGR/BarBend examples: descriptive phrases that keep the connecting words."""
+
+    def test_shanes_examples(self):
+        cases = {
+            "Our product tester stepping into the Renu Stoic 3.0 Cold Plunge":
+                "our-product-tester-stepping-into-the-renu-stoic-3-cold-plunge",
+            "Temperature display on the control panel of a Renu Stoic 3.0 Cold Plunge tub":
+                "temperature-display-on-the-control-panel-of-a-renu-stoic-3-cold-plunge-tub",
+            "Close-up of our tester soaking in the Renu Stoic 3.0 Cold Plunge":
+                "close-up-of-our-tester-soaking-in-the-renu-stoic-3-cold-plunge",
+        }
+        for text, expected in cases.items():
+            self.assertEqual(naming.normalize_name(text, "fitness"), expected)
+
+    def test_sleep_still_drops_connecting_words(self):
+        self.assertEqual(naming.normalize_name("Our tester stepping into the Renu Stoic 3.0 Cold Plunge", "sleep"),
+                         "tester-stepping-into-renu-stoic-3-cold-plunge")
+
+    def test_fitness_length_limit(self):
+        with self.assertRaises(ValueError):
+            naming.normalize_name("our product tester carefully stepping into the deep end of the renu stoic 3.0 "
+                                  "cold plunge tub in the garage", "fitness")
+
+    def test_fitness_still_rejects_camera_names(self):
+        with self.assertRaises(ValueError):
+            naming.normalize_name("IMG_1949 our tester on the bench", "fitness")
+
+    def test_unknown_site_type(self):
+        with self.assertRaises(ValueError):
+            naming.normalize_name("full view", "garden")
+
+
+class VersionTest(unittest.TestCase):
+    def test_trailing_point_zero_drops(self):
+        for site in ("sleep", "fitness"):
+            self.assertEqual(naming.normalize_name("full view renu stoic 3.0 cold plunge", site),
+                             "full-view-renu-stoic-3-cold-plunge")
+            self.assertEqual(naming.normalize_name("full view stoic 10.0", site), "full-view-stoic-10")
+
+    def test_other_dotted_versions_stay(self):
+        self.assertEqual(naming.normalize_name("full view stoic 2.5 cold plunge"), "full-view-stoic-2-5-cold-plunge")
+        self.assertEqual(naming.normalize_name("full view stoic 3.05"), "full-view-stoic-3-05")
+
+    def test_slug(self):
+        self.assertEqual(naming.slug("Renu Stoic 3.0"), "renu-stoic-3")
+        self.assertEqual(naming.slug("The Nécessaire Pillow 2.5"), "the-necessaire-pillow-2-5")
+        with self.assertRaises(ValueError):
+            naming.slug(" ? ")
+
+
+class ReviewOrderTest(unittest.TestCase):
+    def order(self, names):
+        return [names[i] for i in naming.review_order(names)]
+
+    def test_alphabetical_with_copies_in_number_order(self):
+        names = naming.assign_unique(["b"] + ["a"] * 11 + ["a-b"])
+        self.assertEqual(self.order(names), ["a"] + [f"a-{n}" for n in range(2, 12)] + ["a-b", "b"])
+
+    def test_base_before_copies_mid_name_numbers(self):
+        names = ["stoic-3-cold-plunge-10", "stoic-3-cold-plunge-2", "stoic-3-cold-plunge", "stoic-10", "stoic-2"]
+        self.assertEqual(self.order(names), ["stoic-2", "stoic-3-cold-plunge", "stoic-3-cold-plunge-2",
+                                             "stoic-3-cold-plunge-10", "stoic-10"])
+
+
 class AssignUniqueTest(unittest.TestCase):
     def test_first_keeps_name_later_get_numbers(self):
         self.assertEqual(naming.assign_unique(["a", "b", "a", "a"]), ["a", "b", "a-2", "a-3"])

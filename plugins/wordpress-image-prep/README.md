@@ -1,6 +1,10 @@
 # wordpress-image-prep
 
-Turns Central Testing photos into WordPress-ready images for the Sleep sites: WebP, 800px wide, cropped to at most 450px tall around the subject, with SEO-friendly file names like `seated-edge-support-test-helix-midnight-luxe-mattress.webp`. Handles HEIC and JPG, folders or Dropbox zips, and batches with more than one product.
+Turns Central Testing photos into WordPress-ready images for the Sleep sites (Sleep Advisor, Mattress Nerd, Mattress Clarity, Sleepopolis) and the Fitness sites (Garage Gym Reviews, BarBend): WebP, 800px wide, cropped to at most 450px tall around the subject, with SEO-friendly file names and a draft alt-text file. Handles HEIC and JPG, folders or Dropbox zips, and batches with more than one product.
+
+File names follow each site type's convention:
+- **Sleep:** short keyword names, like `seated-edge-support-test-helix-midnight-luxe-mattress.webp`.
+- **Fitness:** descriptive phrases, like `our-product-tester-stepping-into-the-renu-stoic-3-cold-plunge.webp`.
 
 **Owner:** Chance Chipman. Install it from the [P4 plugin marketplace](../../README.md#install-one-time-per-person), which has every P4 plugin in one place.
 
@@ -16,9 +20,10 @@ Turns Central Testing photos into WordPress-ready images for the Sleep sites: We
 
 > Prep the images in my Downloads folder for WordPress.
 
-3. Answer Claude's question about which product each group of photos shows.
-4. Claude puts the images in a new folder next to the originals, named after the product and the date (e.g. `Helix Midnight Luxe - WordPress 2026-10-28`), with a review page beside it (`… - review.html`). Open the review page, check every image, and tell Claude the numbers of any to fix. Claude rewrites the same folder.
-5. Upload the new folder to the site and write alt text.
+3. Tell Claude whether the photos are for a Sleep or a Fitness site (you can skip this by naming the site in your request), and which product each group of photos shows.
+4. Claude puts the images in a new folder next to the originals, named after the product and the date (e.g. `Helix Midnight Luxe - WordPress 2026-10-28`). Beside it go a review page (`… - review.html`) and a draft alt-text file per product (`<brand-model>-alt-text-descriptions.txt`).
+5. Open the review page and check every image: crop, name, product and alt text. Tell Claude the numbers of any to fix, and Claude rewrites the same folder and files.
+6. Upload the new folder to the site, and paste the alt text from the file after reviewing it.
 
 ## What's in this plugin
 

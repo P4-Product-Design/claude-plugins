@@ -27,6 +27,7 @@ figure img { display: block; width: 100%; height: auto; background: var(--line);
 figcaption { padding: 10px 12px 12px; }
 .name { font-family: ui-monospace, Consolas, Menlo, monospace; font-size: 13px; word-break: break-all; margin: 0 0 6px; }
 .meta { color: var(--muted); font-size: 13px; margin: 0; }
+.alt { font-size: 13px; margin: 6px 0 0; }
 """
 
 
@@ -46,7 +47,8 @@ def page_path(out_dir):
 def write_page(out_dir, results, bytes_before, bytes_after, skipped=()):
     """Write the review page for a finished run and return its path.
 
-    results: apply's per-file results (source, product, output, width, height, kb; or source, error).
+    results: apply's per-file results in review order (source, product, alt, output, width, height, kb; or
+    source, error). Cards are numbered in that order, matching the chat report.
     Images are linked by relative path to the files in out_dir, so the page has no copies and no network requests.
     """
     e = html.escape
@@ -63,7 +65,8 @@ def write_page(out_dir, results, bytes_before, bytes_after, skipped=()):
             f'<figcaption><p class="name">{e(name)}</p>'
             f'<p class="meta">{e(r["product"])}</p>'
             f'<p class="meta">from {e(_base(r["source"]))} · {r["width"]} × {r["height"]} · {r["kb"]} KB</p>'
-            f"</figcaption></figure>")
+            + (f'<p class="alt">Alt text: {e(r["alt"])}</p>' if r.get("alt") else "")
+            + "</figcaption></figure>")
     notes = []
     if failed:
         items = "".join(f"<li>{e(_base(r['source']))}: {e(r['error'])}</li>" for r in failed)
@@ -79,7 +82,7 @@ def write_page(out_dir, results, bytes_before, bytes_after, skipped=()):
         f"<title>{e(folder)} - review</title><style>{CSS}</style></head><body><main>"
         f"<h1>{e(folder)}</h1>"
         f'<p class="summary">{count} · {_size(bytes_before)} before → {_size(bytes_after)} after</p>'
-        '<p class="how">Check each image\'s crop, file name and product. To change one, tell Claude its number, '
+        '<p class="how">Check each image\'s crop, file name, product and alt text. To change one, tell Claude its number, '
         'for example "fix 4: the crop cuts off her head".</p>'
         + "".join(notes)
         + f'<div class="grid">{"".join(cards)}</div></main></body></html>\n')

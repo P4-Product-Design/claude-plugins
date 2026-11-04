@@ -59,7 +59,7 @@
     {
       "name": "wordpress-image-prep",
       "source": "./plugins/wordpress-image-prep",
-      "description": "Turns Central Testing photos (HEIC or JPG) into WordPress-ready WebP images: 800px wide, cropped to 450px tall around the subject, renamed for SEO. Handles batches with several products.",
+      "description": "Turns Central Testing photos (HEIC or JPG) into WordPress-ready WebP images for the Sleep and Fitness sites: 800px wide, cropped to 450px tall around the subject, SEO file names, a review page and draft alt text. Handles batches with several products.",
       "category": "content"
     }
   ]
