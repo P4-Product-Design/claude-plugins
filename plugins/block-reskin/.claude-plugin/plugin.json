@@ -1,0 +1,16 @@
+{
+  "name": "block-reskin",
+  "version": "0.1.0",
+  "description": "Reskins a block copied from one P4 brand UI kit into another: relinks colors, type, radius, spacing, buttons and components to the destination kit, scrubs other brand names for partners, and flags every judgment call as a follow-up.",
+  "author": {
+    "name": "Chance Chipman",
+    "email": "chance.chipman@pillarfour.com"
+  },
+  "keywords": [
+    "brand",
+    "design-system",
+    "figma",
+    "reskin",
+    "ui-kit"
+  ]
+}

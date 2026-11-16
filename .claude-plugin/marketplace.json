@@ -9,6 +9,12 @@
   },
   "plugins": [
     {
+      "name": "block-reskin",
+      "source": "./plugins/block-reskin",
+      "description": "Reskins a block copied from one P4 brand UI kit into another: relinks colors, type, radius, spacing, buttons and components to the destination kit, scrubs other brand names for partners, and flags every judgment call as a follow-up.",
+      "category": "design"
+    },
+    {
       "name": "design-audit",
       "source": "./plugins/design-audit",
       "description": "Audits a Figma design, live page, or email against best practices for its page type and UX laws, returns a prioritized list of user-behavior issues and research recommendations, then adds the notes to Figma.",

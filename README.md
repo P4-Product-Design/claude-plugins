@@ -30,6 +30,7 @@ Swap in any plugin name from the table below.
 
 | Plugin | What it does | Owner |
 |---|---|---|
+| [block-reskin](plugins/block-reskin) | Reskins a block copied from one brand UI kit into another, relinking colors, type, radius, spacing, buttons and components, and scrubbing other brands from partner kits. | Chance Chipman |
 | [design-audit](plugins/design-audit) | Audits a Figma design, live page, or email against page-type best practices and UX laws, then adds prioritized notes and research recommendations to Figma. | Chance Chipman |
 | [dev-handoff](plugins/dev-handoff) | Turns a Figma design into an engineer-ready handoff: Requirements and Dev Spec frames, plus native Dev Mode annotations for what changes between breakpoints. | Chance Chipman |
 | [figma-to-optimizely](plugins/figma-to-optimizely) | Turns a Figma design into an Optimizely Web Experiment widget (HTML, CSS, JS, widget.json) with a local preview. | Andy Ramos |
