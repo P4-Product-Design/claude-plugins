@@ -6,7 +6,8 @@ description: >
   To use, provide all required inputs: (1) Product Name, (2) Category, (3) Superlative,
   (4) Product Link, (5) Organic Link or confirm none exists, (6) Live Page URL(s) or confirm
   the page does not yet exist. Supported categories: Creatine, Protein Powder, Pre-Workout,
-  Hair Loss, NMN Supplements, Hearing Aids, Medical Alert Systems, and GLP-1 Medications.
+  Hair Loss, NMN Supplements, Hearing Aids, Medical Alert Systems, GLP-1 Medications, and
+  Testosterone Replacement Therapy (TRT).
   Also triggers for any request involving product block lite, foundational product block, or
   spec grids for the above categories.
 ---
@@ -63,9 +64,9 @@ If any of these are missing when the user sends their request, respond with a cl
 
 The following will cause the skill to stop and decline rather than attempt to proceed:
 
-- **Unsupported categories** — if the requested category is not one of the ten supported categories listed above, do not attempt to map it to a similar one or proceed with a guess. Respond with: "This category is not currently supported. Supported categories are: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids (By Brand or By Product), Medical Alert Systems (By Brand or By Product), and GLP-1 Medications."
+- **Unsupported categories** — if the requested category is not one of the eleven supported categories listed above, do not attempt to map it to a similar one or proceed with a guess. Respond with: "This category is not currently supported. Supported categories are: Creatine, Protein Powder, Pre-Workout, Hair Loss, NMN Supplements, Hearing Aids (By Brand or By Product), Medical Alert Systems (By Brand or By Product), GLP-1 Medications, and Testosterone Replacement Therapy (TRT)."
 - **Missing required inputs** — do not begin research or generation if any of the four required inputs (Product Name, Category, Superlative, Product Link) are absent. List what is missing and wait.
-- **Ambiguous category** — if the category provided does not clearly map to one of the ten supported options, ask for clarification rather than guessing.
+- **Ambiguous category** — if the category provided does not clearly map to one of the eleven supported options, ask for clarification rather than guessing.
 - **Requests to generate content outside the defined block structure** — this skill produces exactly two outputs: a Product Block Lite and a Foundational Product Block, structured as defined. Do not add extra sections, reformat the document, or generate other content types (e.g. blog posts, social copy, ad copy) even if asked.
 - **Requests to use a different template or override field definitions** — the category spec templates in `references/category-specs.md` are the source of truth for field labels and structure. Do not rename, reorder, or replace fields based on user instruction.
 - **Requests to skip the missing field alert** — always surface missing fields to the user before generating the document. Do not silently proceed with incomplete data.
@@ -85,6 +86,7 @@ The following will cause the skill to stop and decline rather than attempt to pr
 8. Medical Alert Systems — By Brand (roundup)
 9. Medical Alert Systems — By Product (single-brand review)
 10. GLP-1 Medications (unified template, covers both roundup and single-brand pages)
+11. Testosterone Replacement Therapy (TRT) (unified template, covers both roundup and single-brand pages)
 
 **IMPORTANT:** If the user says the category is "hearing aids" or "medical alert systems" without specifying which variant, always stop and ask before proceeding:
 
@@ -98,7 +100,7 @@ Read `references/category-specs.md` and locate the section for the product's cat
 - Which 3 rows go in the Who It's For grid
 - Which fields go in the Specs table
 
-**Do not invent or rename fields.** Use the exact labels from the template. (The one exception is the Who It's For grid for GLP-1 Medications, which the template explicitly marks as illustrative rather than fixed — see that category's notes in `references/category-specs.md`.)
+**Do not invent or rename fields.** Use the exact labels from the template. (The exceptions are the Who It's For grids for GLP-1 Medications and TRT, which the template explicitly marks as illustrative rather than fixed — see those categories' notes in `references/category-specs.md`.)
 
 ### Step 3: Gather the product information
 
@@ -267,6 +269,7 @@ If the user provides multiple products at once, repeat the full structure for ea
   - NMN Supplements: "[X] mg of NMN per serving" (or NMN/NAD if both are present)
   Then provide 3 additional benefit-led highlights as usual. This first bullet follows the same length rule as the others (eight words or fewer) but is factual, not benefit-framed
 - **For GLP-1 Medications, the first PBL bullet is always what type of medication the platform offers** — compounded, FDA-approved brand-name, or both — stated as fact, not benefit-framed. Base it on what the brand's site actually offers rather than defaulting to one type. Examples: "Offers compounded GLP-1 options", "Offers FDA-approved GLP-1s like Wegovy®, Zepbound®, Ozempic®", "Offers brand-name GLP-1s and compounded alternatives". Then provide 3 additional benefit-led highlights as usual, following the normal PBL Bullet rules (benefit-led, eight words or fewer, no proprietary tech names)
+- **For TRT, the first PBL bullet is always what the program prescribes** — FDA-approved testosterone, compounded testosterone, both, or a non-testosterone medication such as enclomiphene — stated as fact, not benefit-framed. Base it on the active ingredient listed in the brand's safety information or product details, never on the product name: some programs brand enclomiphene as "Testosterone Rx." If the program prescribes no testosterone, say so. Examples: "Offers compounded testosterone injections", "Offers FDA-approved and compounded testosterone", "Prescribes enclomiphene, not testosterone". Then provide 3 additional benefit-led highlights as usual, following the normal PBL Bullet rules
 - **Subscribe and Save deal descriptions must follow this exact format** — "Subscribe and save for [X]% off" where [X] is the percentage. Never use variations like "Save [X]% when you subscribe" or "Subscribe to save [X]%"
 - **No repetition across sections** — each section must introduce information not already covered elsewhere in the document. Product Tags, PBL Bullets, Who It's For, Pros, Cons, and Bottom Line each serve a distinct purpose. If the same point would appear in two sections, cut it from the less appropriate one and find a different angle for that section instead
 - **PBL Bullets must be short** — eight words or fewer per bullet. No asides, no qualifiers, no sub-clauses (e.g. avoid "even in noisy environments", "for extended use", "and more"). State the benefit, stop.

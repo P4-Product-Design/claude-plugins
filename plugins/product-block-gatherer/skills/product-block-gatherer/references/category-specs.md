@@ -233,3 +233,34 @@ The product page will rarely state a per-day price directly, so derive it:
 | Refund Policy | e.g. "No refunds once medication ships", "Money-back guarantee if not prescribed" |
 | Shipping | e.g. "Free discreet shipping" |
 | Subscription | e.g. "Billed monthly, cancel anytime" |
+
+---
+
+## TESTOSTERONE REPLACEMENT THERAPY (TRT) (unified template — covers both roundup and single-brand pages)
+
+### Product Overview Grid (4 rows)
+| Field Label | Notes |
+|---|---|
+| Medications | Name each medication and mark compounded or FDA-approved where the brand states it, e.g. "Compounded testosterone injections", "Xyosted, testosterone cypionate, testosterone gel, and compounded sermorelin", "Compounded enclomiphene, alone or paired with tadalafil" |
+| Lab Testing | e.g. "At-home kit or in-person draw at Quest or Labcorp", "At-home sample kit processed at a CLIA-certified lab" |
+| Clinician Support | e.g. "Unlimited clinician access through the patient portal", "Round-the-clock messaging, with physicians adjusting your protocol" |
+| Insurance | e.g. "Cash pay only", "Medicare and some commercial plans accepted for eligible services in select states". Add HSA/FSA status if the brand states it |
+
+### Who It's For / What You'll Love Grid (3 rows)
+Like GLP-1, this list is illustrative, not a fixed menu: Needle-Averse Patients, Frequent Travelers, Insurance Users, First-Time Patients, Provider Switchers, Predictable Budgets, Busy Professionals, Lunch-Break Appointments, Executive Health Seekers. Write the 3 labels that describe what this specific brand offers, based on something real and verifiable. Use a different label for each brand on the same page. Frame professional angles around convenience, never work performance (e.g. avoid "stay sharp at work"), since that reads as an efficacy claim.
+
+### Specs Table (4 fields — all required)
+| Field Label | Notes |
+|---|---|
+| Plan Options | e.g. "Month-to-month or 3, 6, and 12-month plans", "Monthly membership that auto-renews; cancel via portal, phone, or email" |
+| Refill Requirements | e.g. "Updated labs, a renewal form, and a short clinician check-in before each refill", "Labs twice a year plus provider check-ins" |
+| Shipping | e.g. "Free discreet shipping, typically three to five business days" |
+| State Availability | e.g. "Not available in 11 states, including Alaska and Hawaii", "Treatments vary by state". List exclusions when the brand publishes them |
+
+### TRT notes
+- **No price field.** Unlike GLP-1, TRT has no Price per Day or Price per Serving exception: most programs don't publish full monthly costs, so the standard no-pricing rule applies everywhere except the Deal Description.
+- **Verify the active ingredient, not the product name.** Check the brand's safety information or product details. Enclomiphene, clomiphene, and sermorelin are not testosterone, and enclomiphene and sermorelin are not FDA-approved.
+- **Check the link readers will use.** Affiliate links can show a different product lineup than the bare URL (Hims showed enclomiphene only on its bare landing page and four products, including testosterone injections and Kyzatrex, on the Fortune affiliate link). If the user provides an affiliate link, research that version and note any difference.
+- **Ratings.** Unless the user provides a Fortune score, use "Fortune score pending". If a customer rating is needed, use Trustpilot for every brand on the page and label it as such, so sources stay consistent.
+- **Who It's For, Pros, and Cons stay away from results claims.** Don't repeat brand claims like "doubles your T" or "works in days".
+
